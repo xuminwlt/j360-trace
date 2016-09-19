@@ -17,6 +17,7 @@
         <module>j360-trace-http</module>
         <module>j360-trace-mq</module>
         <module>j360-trace-example-parent</module>
+        <module>j360-trace-collector</module>
     </modules>
 
 
