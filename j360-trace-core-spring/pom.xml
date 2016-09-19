@@ -9,17 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>j360-trace-collector</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>kafka</module>
-        <module>j360-trace-collector-activemq</module>
-        <module>acvivemq</module>
-        <module>activemq</module>
-        <module>http</module>
-        <module>local</module>
-        <module>local</module>
-    </modules>
+    <artifactId>j360-trace-core-spring</artifactId>
 
 
 </project>
