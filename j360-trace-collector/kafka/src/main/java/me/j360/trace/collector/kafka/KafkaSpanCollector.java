@@ -1,7 +1,6 @@
 package me.j360.trace.collector.kafka;
 
 import com.google.auto.value.AutoValue;
-import com.twitter.zipkin.gen.SpanCodec;
 import me.j360.trace.collector.core.AbstractSpanCollector;
 import me.j360.trace.collector.core.SpanCollectorMetricsHandler;
 import me.j360.trace.collector.core.module.SpanCodec;

@@ -9,7 +9,6 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>j360-trace-core</module>
         <module>j360-trace-dubbo</module>
         <module>j360-trace-springmvc</module>
         <module>j360-trace-mysql</module>
@@ -17,7 +16,6 @@
         <module>j360-trace-mq</module>
         <module>j360-trace-example-parent</module>
         <module>j360-trace-collector</module>
-        <module>j360-trace-core-spring</module>
         <module>j360-trace-collector-core</module>
         <module>j360-trace-spring-core</module>
         <module>j360-trace-storage</module>

@@ -13,6 +13,14 @@ import java.util.List;
  */
 public final class LocalSpanCollector extends FlushingSpanCollector {
 
+  /**
+   * @param metrics
+   * @param flushInterval in seconds. 0 implies spans are {@link #flush() flushed externally.
+   */
+  protected LocalSpanCollector(SpanCollectorMetricsHandler metrics, int flushInterval) {
+    super(metrics, flushInterval);
+  }
+
   @Override
   protected void reportSpans(List<Span> drained) throws IOException {
 
@@ -37,7 +45,7 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
   }
 
   //private final StorageComponent storageComponent;
-  private final SpanCollectorMetricsHandler metrics;
+  //private final SpanCollectorMetricsHandler metrics;
 
   /**
    * Create a new instance with default configuration.

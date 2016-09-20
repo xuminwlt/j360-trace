@@ -1,7 +1,7 @@
 package me.j360.trace.http;
 
-import com.sun.istack.internal.Nullable;
 import me.j360.trace.collector.core.*;
+import me.j360.trace.collector.core.internal.Nullable;
 import me.j360.trace.collector.core.module.Endpoint;
 
 import java.net.URI;

@@ -16,7 +16,6 @@
         <module>activemq</module>
         <module>http</module>
         <module>local</module>
-        <module>local</module>
     </modules>
 
 
