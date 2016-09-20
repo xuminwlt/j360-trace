@@ -1,0 +1,2 @@
+j360Consumer=me.j360.trace.dubbo.J360DubboConsumerFilter
+j360Provider=me.j360.trace.dubbo.J360DubboProviderFilter
