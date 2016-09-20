@@ -1,10 +1,10 @@
 package me.j360.trace.springmvc;
 
-import com.github.kristofa.brave.ServerRequestInterceptor;
-import com.github.kristofa.brave.ServerResponseInterceptor;
-import com.github.kristofa.brave.ServerSpan;
-import com.github.kristofa.brave.ServerSpanThreadBinder;
-import com.github.kristofa.brave.http.*;
+import me.j360.trace.collector.core.ServerRequestInterceptor;
+import me.j360.trace.collector.core.ServerResponseInterceptor;
+import me.j360.trace.collector.core.ServerSpan;
+import me.j360.trace.collector.core.ServerSpanThreadBinder;
+import me.j360.trace.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 
 public class ServletHandlerInterceptor extends HandlerInterceptorAdapter {
 
-    static final String HTTP_SERVER_SPAN_ATTRIBUTE = ServletHandlerInterceptor.class.getName() + ".server-span";
+    public static final String HTTP_SERVER_SPAN_ATTRIBUTE = ServletHandlerInterceptor.class.getName() + ".server-span";
 
     private final ServerRequestInterceptor requestInterceptor;
     private final SpanNameProvider spanNameProvider;

@@ -1,21 +1,22 @@
-package com.github.kristofa.brave.local;
+package me.j360.trace.collector.local;
 
-import com.github.kristofa.brave.EmptySpanCollectorMetricsHandler;
-import com.github.kristofa.brave.FlushingSpanCollector;
-import com.github.kristofa.brave.SpanCollectorMetricsHandler;
 import com.google.auto.value.AutoValue;
-import com.twitter.zipkin.gen.Span;
+import me.j360.trace.collector.core.FlushingSpanCollector;
+import me.j360.trace.collector.core.SpanCollectorMetricsHandler;
+import me.j360.trace.collector.core.module.Span;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import zipkin.storage.AsyncSpanConsumer;
-import zipkin.storage.Callback;
-import zipkin.storage.StorageComponent;
 
 /**
  * SpanCollector which submits spans directly to a Zipkin {@link StorageComponent}.
  */
 public final class LocalSpanCollector extends FlushingSpanCollector {
+
+  @Override
+  protected void reportSpans(List<Span> drained) throws IOException {
+
+  }
 
   @AutoValue
   public static abstract class Config {
@@ -35,7 +36,7 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
     }
   }
 
-  private final StorageComponent storageComponent;
+  //private final StorageComponent storageComponent;
   private final SpanCollectorMetricsHandler metrics;
 
   /**
@@ -45,10 +46,10 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
    * @param metrics Gets notified when spans are accepted or dropped. If you are not interested in
    *                these events you can use {@linkplain EmptySpanCollectorMetricsHandler}
    */
-  public static LocalSpanCollector create(StorageComponent storageComponent,
+  /*public static LocalSpanCollector create(StorageComponent storageComponent,
       SpanCollectorMetricsHandler metrics) {
     return new LocalSpanCollector(storageComponent, Config.builder().build(), metrics);
-  }
+  }*/
 
   /**
    * @param storageComponent spans will be written asynchronously to this
@@ -56,29 +57,29 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
    * @param metrics Gets notified when spans are accepted or dropped. If you are not interested in
    *                these events you can use {@linkplain EmptySpanCollectorMetricsHandler}
    */
-  public static LocalSpanCollector create(StorageComponent storageComponent, Config config,
+  /*public static LocalSpanCollector create(StorageComponent storageComponent, Config config,
       SpanCollectorMetricsHandler metrics) {
     return new LocalSpanCollector(storageComponent, config, metrics);
-  }
+  }*/
 
   // Visible for testing. Ex when tests need to explicitly control flushing, set interval to 0.
-  LocalSpanCollector(StorageComponent storageComponent, Config config,
+  /*LocalSpanCollector(StorageComponent storageComponent, Config config,
       SpanCollectorMetricsHandler metrics) {
     super(metrics, config.flushInterval());
     this.storageComponent = storageComponent;
     this.metrics = metrics;
-  }
+  }*/
 
-  @Override protected void reportSpans(final List<Span> drained) throws IOException {
+  /*@Override protected void reportSpans(final List<Span> drained) throws IOException {
     // Brave 3 doesn't use zipkin spans. Convert accordingly
     List<zipkin.Span> zipkinSpans = new ArrayList<zipkin.Span>(drained.size());
     for (Span input : drained) {
       zipkinSpans.add(input.toZipkin());
     }
-    // This dereferences a lazy, which might throw an exception if the storage system is down.
+    // This dereferences a lazy, which might throw an exception if the me.j360.trace.core.storage system is down.
     AsyncSpanConsumer asyncSpanConsumer = storageComponent.asyncSpanConsumer();
 
-    // We accept the spans into storage, incrementing drop metrics if there was a failure.
+    // We accept the spans into me.j360.trace.core.storage, incrementing drop metrics if there was a failure.
     asyncSpanConsumer.accept(zipkinSpans, new Callback<Void>() {
       @Override public void onSuccess(Void ignored) {
       }
@@ -87,5 +88,5 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
         metrics.incrementDroppedSpans(drained.size());
       }
     });
-  }
+  }*/
 }

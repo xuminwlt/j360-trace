@@ -1,10 +1,10 @@
 package me.j360.trace.collector.kafka;
 
-import com.github.kristofa.brave.AbstractSpanCollector;
-import com.github.kristofa.brave.EmptySpanCollectorMetricsHandler;
-import com.github.kristofa.brave.SpanCollectorMetricsHandler;
 import com.google.auto.value.AutoValue;
 import com.twitter.zipkin.gen.SpanCodec;
+import me.j360.trace.collector.core.AbstractSpanCollector;
+import me.j360.trace.collector.core.SpanCollectorMetricsHandler;
+import me.j360.trace.collector.core.module.SpanCodec;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -89,7 +89,7 @@ public final class KafkaSpanCollector extends AbstractSpanCollector {
 
   // Visible for testing. Ex when tests need to explicitly control flushing, set interval to 0.
   KafkaSpanCollector(Config config, SpanCollectorMetricsHandler metrics) {
-    super(SpanCodec.THRIFT, metrics, config.flushInterval());
+    super(SpanCodec.JSON, metrics, config.flushInterval());
     this.producer = new KafkaProducer<>(config.kafkaProperties());
     this.topic = config.topic();
   }

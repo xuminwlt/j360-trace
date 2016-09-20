@@ -1,10 +1,10 @@
 package me.j360.trace.collector.http;
 
-import com.github.kristofa.brave.AbstractSpanCollector;
-import com.github.kristofa.brave.EmptySpanCollectorMetricsHandler;
-import com.github.kristofa.brave.SpanCollectorMetricsHandler;
+
 import com.google.auto.value.AutoValue;
-import com.twitter.zipkin.gen.SpanCodec;
+import me.j360.trace.collector.core.AbstractSpanCollector;
+import me.j360.trace.collector.core.SpanCollectorMetricsHandler;
+import me.j360.trace.collector.core.module.SpanCodec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

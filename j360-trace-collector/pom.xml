@@ -13,8 +13,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>kafka</module>
-        <module>j360-trace-collector-activemq</module>
-        <module>acvivemq</module>
         <module>activemq</module>
         <module>http</module>
         <module>local</module>
