@@ -19,7 +19,7 @@
 	  <init-param>
 		  <param-name>contextConfigLocation</param-name>
 		  <param-value>
-			  com.github.kristofa.brave.spring.BraveConfig
+			  me.j360.trace.example.springmvc.BraveConfig
 		  </param-value>
 	  </init-param>
 	  <load-on-startup>1</load-on-startup>
@@ -29,7 +29,7 @@
 
 	<servlet-mapping>
 	  <servlet-name>dispatcher</servlet-name>
-	  <url-pattern>/brave-servlet-interceptor/*</url-pattern>
+	  <url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
 

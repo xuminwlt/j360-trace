@@ -34,8 +34,8 @@ public class ITBraveServletHandlerInterceptor {
 
         final WebAppContext context = new WebAppContext();
         context.setServer(server);
-        context.setContextPath("/BraveServletInterceptorIntegration");
-        context.setWar("src/test/webapp");
+        context.setContextPath("/");
+        context.setWar("src/main/webapp");
 
         server.setHandler(context);
 

@@ -8,9 +8,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>j360-trace-collector-local</artifactId>
 
+    <description>local for log->slf4j(console/file)/vm</description>
 
     <dependencies>
         <dependency>
