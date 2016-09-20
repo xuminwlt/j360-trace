@@ -2,3 +2,5 @@
 跟踪监控插件
 
 ##module组成
+* collector
+* storage
