@@ -3,8 +3,6 @@ package me.j360.trace.dubbo;
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.rpc.*;
-import com.handu.skye.*;
-import com.handu.skye.Tracer;
 
 @Activate(group = {Constants.PROVIDER})
 public class J360DubboProviderFilter implements Filter {
@@ -16,7 +14,7 @@ public class J360DubboProviderFilter implements Filter {
         }
 
         RpcContext context = RpcContext.getContext();
-        Endpoint endpoint = new Endpoint(context.getLocalHost(), context.getLocalPort());
+        /*Endpoint endpoint = new Endpoint(context.getLocalHost(), context.getLocalPort());
 
         String traceId = invocation.getAttachment(Header.TRACE_ID);
         String spanId = invocation.getAttachment(Header.SPAN_ID);
@@ -46,7 +44,8 @@ public class J360DubboProviderFilter implements Filter {
         } finally {
             span.addEvent(Event.SERVER_SEND, endpoint);
             Tracer.commit(span);
-        }
+        }*/
+        return null;
     }
 
 }
