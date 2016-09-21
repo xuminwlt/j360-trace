@@ -71,7 +71,7 @@ public class J360DubboServerFilter implements Filter {
     }
 
 
-    static final class DubboServerRequestAdapter<ReqT, RespT> implements ServerRequestAdapter {
+    static final class DubboServerRequestAdapter implements ServerRequestAdapter {
 
         private RpcContext context;
         private Invocation invocation;
