@@ -253,14 +253,15 @@ public class Span implements Serializable {
     return h;
   }
 
+  //use
   @Override
   public String toString() {
     return new String(SpanCodec.JSON.writeSpan(this), Util.UTF_8);
   }
 
   /** Changes this to a zipkin-native span object. */
-  /*public zipkin.Span toZipkin() {
-    zipkin.Span.Builder result = zipkin.Span.builder();
+  public me.j360.trace.core.Span toZipkin() {
+    me.j360.trace.core.Span.Builder result = me.j360.trace.core.Span.builder();
     result.traceId(getTrace_id());
     result.id(getId());
     result.parentId(getParent_id());
@@ -269,23 +270,23 @@ public class Span implements Serializable {
     result.duration(getDuration());
     result.debug(isDebug());
     for (Annotation a : getAnnotations()) {
-      result.addAnnotation(zipkin.Annotation.create(a.timestamp, a.value, from(a.host)));
+      result.addAnnotation(me.j360.trace.core.Annotation.create(a.timestamp, a.value, from(a.host)));
     }
     for (BinaryAnnotation a : getBinary_annotations()) {
-      result.addBinaryAnnotation(zipkin.BinaryAnnotation.builder()
+      result.addBinaryAnnotation(me.j360.trace.core.BinaryAnnotation.builder()
           .key(a.key)
           .value(a.value)
-          .type(zipkin.BinaryAnnotation.Type.fromValue(a.type.getValue()))
+          .type(me.j360.trace.core.BinaryAnnotation.Type.fromValue(a.type.getValue()))
           .endpoint(from(a.host))
           .build());
     }
     return result.build();
   }
 
-  private static zipkin.Endpoint from(Endpoint host) {
+  private static me.j360.trace.core.Endpoint from(Endpoint host) {
     if (host == null) return null;
-    if (host.port == null) return zipkin.Endpoint.create(host.service_name, host.ipv4);
-    return zipkin.Endpoint.create(host.service_name, host.ipv4, host.port);
-  }*/
+    if (host.port == null) return me.j360.trace.core.Endpoint.create(host.service_name, host.ipv4);
+    return me.j360.trace.core.Endpoint.create(host.service_name, host.ipv4, host.port);
+  }
 }
 

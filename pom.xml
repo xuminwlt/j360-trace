@@ -20,6 +20,7 @@
         <module>j360-trace-spring-core</module>
         <module>j360-trace-storage</module>
         <module>j360-trace-storage-core</module>
+        <module>j360-trace-core</module>
     </modules>
 
 

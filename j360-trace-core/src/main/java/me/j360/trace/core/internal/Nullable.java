@@ -11,14 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package me.j360.trace.collector.core.internal;
-
-
-import java.util.List;
+package me.j360.trace.core.internal;
 
 /**
- * Methods make an attempt to perform codec operations, failing to null.
+ * Libraries such as Guice and AutoValue will process any annotation named {@code Nullable}. This
+ * avoids a dependency on one of the many jsr305 jars.
  */
-public interface Codec {
-
+@java.lang.annotation.Documented
+@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+public @interface Nullable {
 }
