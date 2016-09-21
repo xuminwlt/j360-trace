@@ -31,7 +31,7 @@ public class BraveConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public Brave brave() {
-        Brave.Builder builder = new Brave.Builder("BraveServletInterceptorIntegration")
+        Brave.Builder builder = new Brave.Builder("J360ServletInterceptorIntegration")
                 .spanCollector(SpanCollectorForTesting.getInstance());
         return builder.build();
     }

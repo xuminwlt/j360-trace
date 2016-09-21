@@ -16,6 +16,12 @@
 
 * trace点
     - springmvc
+        - url = http://localhost:8080/ping/sync
+        * headers
+            - X-B3-Sampled true
+            - X-B3-TraceId 1
+            - X-B3-SpanId 1
+            - X-B3-ParentSpanId 0
     - dubbo
     - httpClient
     - okhttp
