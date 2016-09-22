@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>mongodb</module>
+        <module>elasticsearch</module>
     </modules>
 
 
