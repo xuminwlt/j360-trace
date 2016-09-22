@@ -23,6 +23,13 @@
             - X-B3-SpanId 1
             - X-B3-ParentSpanId 0
     - dubbo
+        * Server(Provider)
+            - dubbo:    <dubbo:provider filter="j360Provider"/>
+            - UserServiceImpl
+        * Client(Consumer)
+            - dubbo:    <dubbo:provider filter="j360Consumer"/>
+            - UserController -> UserService - > ↓
+            - result =  _1  < - getUserName(uid)
     - httpClient
     - okhttp
     - mysql
