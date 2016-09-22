@@ -12,8 +12,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static me.j360.trace.collector.core.IdConversion.convertToLong;
 
-@Activate(group = {Constants.CONSUMER})
+
+/**
+ * 使用构造方法注入
+ * 修改dubbo:provider中添加配置的dubbo:provider filter="xxxFilter"> <dubbo:parameter key="qaccesslog" value="9"/> <dubbo:parameter key="qloglevel" value="8"/> </dubbo:provider>
+ *
+ */
+@Activate(group = {Constants.PROVIDER})
 public class J360DubboServerFilter implements Filter {
 
     private final ServerRequestInterceptor serverRequestInterceptor;
@@ -36,38 +43,7 @@ public class J360DubboServerFilter implements Filter {
         Result result = invoker.invoke(invocation);
         serverResponseInterceptor.handle(new DubboServerResponseAdapter(result));
 
-        /*Endpoint endpoint = new Endpoint(context.getLocalHost(), context.getLocalPort());
-
-        String traceId = invocation.getAttachment(Header.TRACE_ID);
-        String spanId = invocation.getAttachment(Header.SPAN_ID);
-        boolean sampled = Boolean.parseBoolean(invocation.getAttachment(Header.SAMPLED));
-        Tracer.setRootSpan(traceId, spanId, sampled);
-
-        // 没有跟踪头不采样
-        if (Tracer.lastSpan() == null) {
-            return invoker.invoke(invocation);
-        }
-
-        Span span = Tracer.begin(context.getMethodName());
-
-        try {
-            span.addEvent(Event.SERVER_RECV, endpoint);
-
-            Result result = invoker.invoke(invocation);
-
-            if (result.getException() != null) {
-                span.addBinaryEvent("dubbo.exception", result.getException().getMessage(), endpoint);
-            }
-
-            return result;
-        } catch (RpcException e) {
-            span.addBinaryEvent("dubbo.exception", e.getMessage(), endpoint);
-            throw e;
-        } finally {
-            span.addEvent(Event.SERVER_SEND, endpoint);
-            Tracer.commit(span);
-        }*/
-        return null;
+        return result;
     }
 
 
@@ -121,19 +97,19 @@ public class J360DubboServerFilter implements Filter {
 
     static final class DubboServerResponseAdapter implements ServerResponseAdapter {
 
-        final Status status;
+        private final Result result;
 
-        public GrpcServerResponseAdapter(Status status) {
-            this.status = status;
+        public DubboServerResponseAdapter(Result result) {
+            this.result = result;
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public Collection<KeyValueAnnotation> responseAnnotations() {
-            Code statusCode = status.getCode();
-            return statusCode == Code.OK
+            return result.getException() == null
                     ? Collections.<KeyValueAnnotation>emptyList()
-                    : Collections.singletonList(KeyValueAnnotation.create(GRPC_STATUS_CODE, statusCode.name()));
+                    : Collections.singletonList(KeyValueAnnotation.create("dubbo.exception", result.getException().getMessage()));
+
         }
 
     }

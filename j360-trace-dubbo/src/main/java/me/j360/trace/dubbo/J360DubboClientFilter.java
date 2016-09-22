@@ -8,22 +8,21 @@ import me.j360.trace.collector.core.internal.Nullable;
 import me.j360.trace.collector.core.module.Endpoint;
 import me.j360.trace.http.BraveHttpHeaders;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Activate(group = {Constants.PROVIDER})
+@Activate(group = {Constants.CONSUMER})
 public class J360DubboClientFilter implements Filter {
 
     private final ClientRequestInterceptor clientRequestInterceptor;
     private final ClientResponseInterceptor clientResponseInterceptor;
-    private final ClientSpanThreadBinder clientSpanThreadBinder;
 
     public J360DubboClientFilter(Brave brave) {
         this.clientRequestInterceptor = checkNotNull(brave.clientRequestInterceptor());
         this.clientResponseInterceptor = checkNotNull(brave.clientResponseInterceptor());
-        this.clientSpanThreadBinder = checkNotNull(brave.clientSpanThreadBinder());
     }
 
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
@@ -36,7 +35,6 @@ public class J360DubboClientFilter implements Filter {
         clientResponseInterceptor.handle(new DubboClientResponseAdapter(result));
         return result;
     }
-
 
     static final class DubboClientRequestAdapter implements ClientRequestAdapter {
 
@@ -97,5 +95,7 @@ public class J360DubboClientFilter implements Filter {
                     : Collections.singletonList(KeyValueAnnotation.create("dubbo.exception", result.getException().getMessage()));
         }
     }
+
+
 
 }
