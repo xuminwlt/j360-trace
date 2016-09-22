@@ -17,10 +17,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Activate(group = {Constants.CONSUMER})
 public class J360DubboClientFilter implements Filter {
 
-    private final ClientRequestInterceptor clientRequestInterceptor;
-    private final ClientResponseInterceptor clientResponseInterceptor;
+    private ClientRequestInterceptor clientRequestInterceptor;
+    private ClientResponseInterceptor clientResponseInterceptor;
+    private Brave brave;
 
-    public J360DubboClientFilter(Brave brave) {
+    public void setBrave(Brave brave) {
+        this.brave = brave;
         this.clientRequestInterceptor = checkNotNull(brave.clientRequestInterceptor());
         this.clientResponseInterceptor = checkNotNull(brave.clientResponseInterceptor());
     }
@@ -35,6 +37,7 @@ public class J360DubboClientFilter implements Filter {
         clientResponseInterceptor.handle(new DubboClientResponseAdapter(result));
         return result;
     }
+
 
     static final class DubboClientRequestAdapter implements ClientRequestAdapter {
 

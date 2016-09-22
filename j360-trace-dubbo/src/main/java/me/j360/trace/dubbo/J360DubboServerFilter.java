@@ -23,10 +23,12 @@ import static me.j360.trace.collector.core.IdConversion.convertToLong;
 @Activate(group = {Constants.PROVIDER})
 public class J360DubboServerFilter implements Filter {
 
-    private final ServerRequestInterceptor serverRequestInterceptor;
-    private final ServerResponseInterceptor serverResponseInterceptor;
+    private ServerRequestInterceptor serverRequestInterceptor;
+    private ServerResponseInterceptor serverResponseInterceptor;
+    private Brave brave;
 
-    public J360DubboServerFilter(Brave brave) {
+    public void setBrave(Brave brave) {
+        this.brave = brave;
         this.serverRequestInterceptor = checkNotNull(brave.serverRequestInterceptor());
         this.serverResponseInterceptor = checkNotNull(brave.serverResponseInterceptor());
     }
