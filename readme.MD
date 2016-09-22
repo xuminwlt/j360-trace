@@ -2,6 +2,16 @@
 跟踪监控插件
 * 本项目供学习之用，参考Google Dapper论文设计，收集存储分离，使用kafka，http，mq等进行解耦
 
+* log
+ - 所有log输出统一到slf4j，实现使用logback
+
+* 集成时版本注意事项
+ - dubbo version
+ - log version
+ - spring version
+ - javasist version
+ - netty version
+
 
 ##module组成
 * collector 收集
