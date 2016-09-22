@@ -18,7 +18,7 @@ public class BraveConfig {
 
     @Bean
     public Brave brave() {
-        Brave.Builder builder = new Brave.Builder("J360ServletInterceptorIntegration")
+        Brave.Builder builder = new Brave.Builder("J360DubboInterceptorIntegration")
                 .spanCollector(SpanCollectorForTesting.getInstance());
         return builder.build();
     }
