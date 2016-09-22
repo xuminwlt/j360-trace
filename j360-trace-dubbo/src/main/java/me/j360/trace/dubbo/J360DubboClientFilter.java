@@ -92,7 +92,7 @@ public class J360DubboClientFilter implements Filter {
         public Collection<KeyValueAnnotation> responseAnnotations() {
             return result.getException() == null
                     ? Collections.<KeyValueAnnotation>emptyList()
-                    : Collections.singletonList(KeyValueAnnotation.create("dubbo.exception", result.getException().getMessage()));
+                    : Collections.singletonList(KeyValueAnnotation.create(DubboKeys.DUBBO_EXCEPTION_NAME, result.getException().getMessage()));
         }
     }
 
