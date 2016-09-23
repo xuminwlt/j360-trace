@@ -11,32 +11,30 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package zipkin.collector.kafka;
+package me.j360.trace.storage.core.kafka;
 
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
+import me.j360.trace.core.Codec;
+import me.j360.trace.core.Span;
+import me.j360.trace.core.collector.InMemoryCollectorMetrics;
+import me.j360.trace.core.storage.AsyncSpanConsumer;
+import me.j360.trace.core.storage.AsyncSpanStore;
+import me.j360.trace.core.storage.SpanStore;
+import me.j360.trace.core.storage.StorageComponent;
 import org.I0Itec.zkclient.exception.ZkTimeoutException;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Timeout;
-import zipkin.Codec;
-import zipkin.Span;
-import zipkin.TestObjects;
-import zipkin.collector.InMemoryCollectorMetrics;
-import zipkin.collector.kafka.KafkaCollector.Builder;
-import zipkin.storage.AsyncSpanConsumer;
-import zipkin.storage.AsyncSpanStore;
-import zipkin.storage.SpanStore;
-import zipkin.storage.StorageComponent;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static zipkin.TestObjects.TRACE;
+import static me.j360.trace.storage.core.kafka.TestObjects.*;
 
 public class KafkaCollectorTest {
   @Rule
@@ -64,7 +62,7 @@ public class KafkaCollectorTest {
     thrown.expect(ZkTimeoutException.class);
     thrown.expectMessage("Unable to connect to zookeeper server within timeout: 6000");
 
-    Builder builder = builder("fail_invalid_zk").zookeeper("1.1.1.1");
+    KafkaCollector.Builder builder = builder("fail_invalid_zk").zookeeper("1.1.1.1");
 
     try (KafkaCollector collector = newKafkaTransport(builder, consumer)) {
     }
@@ -72,7 +70,7 @@ public class KafkaCollectorTest {
 
   @Test
   public void canSetMaxMessageSize() throws Exception {
-    Builder builder = builder("max_message").maxMessageSize(1);
+    KafkaCollector.Builder builder = builder("max_message").maxMessageSize(1);
 
     try (KafkaCollector collector = newKafkaTransport(builder, consumer)) {
       assertThat(collector.connector.get().config().fetchMessageMaxBytes())
@@ -83,9 +81,9 @@ public class KafkaCollectorTest {
   /** Ensures legacy encoding works: a single TBinaryProtocol encoded span */
   @Test
   public void messageWithSingleThriftSpan() throws Exception {
-    Builder builder = builder("single_span");
+    KafkaCollector.Builder builder = builder("single_span");
 
-    byte[] bytes = Codec.THRIFT.writeSpan(TRACE.get(0));
+    byte[] bytes = Codec.JSON.writeSpan(TRACE.get(0));
     producer.send(new KeyedMessage<>(builder.topic, bytes));
 
     try (KafkaCollector collector = newKafkaTransport(builder, consumer)) {
@@ -100,9 +98,9 @@ public class KafkaCollectorTest {
   /** Ensures list encoding works: a TBinaryProtocol encoded list of spans */
   @Test
   public void messageWithMultipleSpans_thrift() throws Exception {
-    Builder builder = builder("multiple_spans_thrift");
+    KafkaCollector.Builder builder = builder("multiple_spans_thrift");
 
-    byte[] bytes = Codec.THRIFT.writeSpans(TRACE);
+    byte[] bytes = Codec.JSON.writeSpans(TRACE);
     producer.send(new KeyedMessage<>(builder.topic, bytes));
 
     try (KafkaCollector collector = newKafkaTransport(builder, consumer)) {
@@ -117,7 +115,7 @@ public class KafkaCollectorTest {
   /** Ensures list encoding works: a json encoded list of spans */
   @Test
   public void messageWithMultipleSpans_json() throws Exception {
-    Builder builder = builder("multiple_spans_json");
+    KafkaCollector.Builder builder = builder("multiple_spans_json");
 
     byte[] bytes = Codec.JSON.writeSpans(TRACE);
     producer.send(new KeyedMessage<>(builder.topic, bytes));
@@ -134,13 +132,13 @@ public class KafkaCollectorTest {
   /** Ensures malformed spans don't hang the collector */
   @Test
   public void skipsMalformedData() throws Exception {
-    Builder builder = builder("decoder_exception");
+    KafkaCollector.Builder builder = builder("decoder_exception");
 
-    producer.send(new KeyedMessage<>(builder.topic, Codec.THRIFT.writeSpans(TRACE)));
+    producer.send(new KeyedMessage<>(builder.topic, Codec.JSON.writeSpans(TRACE)));
     producer.send(new KeyedMessage<>(builder.topic, new byte[0]));
     producer.send(new KeyedMessage<>(builder.topic, "[\"='".getBytes())); // screwed up json
     producer.send(new KeyedMessage<>(builder.topic, "malformed".getBytes()));
-    producer.send(new KeyedMessage<>(builder.topic, Codec.THRIFT.writeSpans(TRACE)));
+    producer.send(new KeyedMessage<>(builder.topic, Codec.JSON.writeSpans(TRACE)));
 
     try (KafkaCollector collector = newKafkaTransport(builder, consumer)) {
       assertThat(recvdSpans.take()).containsExactlyElementsOf(TRACE);
@@ -154,7 +152,7 @@ public class KafkaCollectorTest {
   /** Guards against errors that leak from storage, such as InvalidQueryException */
   @Test
   public void skipsOnConsumerException() throws Exception {
-    Builder builder = builder("consumer_exception");
+    KafkaCollector.Builder builder = builder("consumer_exception");
 
     AtomicInteger counter = new AtomicInteger();
 
@@ -167,9 +165,9 @@ public class KafkaCollectorTest {
       }
     };
 
-    producer.send(new KeyedMessage<>(builder.topic, Codec.THRIFT.writeSpans(TRACE)));
-    producer.send(new KeyedMessage<>(builder.topic, Codec.THRIFT.writeSpans(TRACE))); // tossed on error
-    producer.send(new KeyedMessage<>(builder.topic, Codec.THRIFT.writeSpans(TRACE)));
+    producer.send(new KeyedMessage<>(builder.topic, Codec.JSON.writeSpans(TRACE)));
+    producer.send(new KeyedMessage<>(builder.topic, Codec.JSON.writeSpans(TRACE))); // tossed on error
+    producer.send(new KeyedMessage<>(builder.topic, Codec.JSON.writeSpans(TRACE)));
 
     try (KafkaCollector collector = newKafkaTransport(builder, consumer)) {
       assertThat(recvdSpans.take()).containsExactlyElementsOf(TRACE);
@@ -180,11 +178,11 @@ public class KafkaCollectorTest {
     assertThat(kafkaMetrics.spansDropped()).isEqualTo(TestObjects.TRACE.size());
   }
 
-  Builder builder(String topic) {
-    return new Builder().metrics(metrics).zookeeper("127.0.0.1:2181").topic(topic);
+  KafkaCollector.Builder builder(String topic) {
+    return new KafkaCollector.Builder().metrics(metrics).zookeeper("127.0.0.1:2181").topic(topic);
   }
 
-  KafkaCollector newKafkaTransport(Builder builder, AsyncSpanConsumer consumer) {
+  KafkaCollector newKafkaTransport(KafkaCollector.Builder builder, AsyncSpanConsumer consumer) {
     return new KafkaCollector(builder.storage(new StorageComponent() {
       @Override public SpanStore spanStore() {
         throw new AssertionError();
