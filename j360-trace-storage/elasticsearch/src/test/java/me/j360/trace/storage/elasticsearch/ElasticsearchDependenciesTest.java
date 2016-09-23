@@ -13,19 +13,17 @@
  */
 package me.j360.trace.storage.elasticsearch;
 
-import zipkin.DependencyLink;
-import zipkin.Span;
-import zipkin.internal.MergeById;
-import zipkin.storage.DependenciesTest;
-import zipkin.storage.InMemorySpanStore;
-import zipkin.storage.InMemoryStorage;
-import zipkin.storage.StorageComponent;
+
+import me.j360.trace.core.DependencyLink;
+import me.j360.trace.core.Span;
+import me.j360.trace.core.internal.MergeById;
+import me.j360.trace.core.storage.InMemoryStorage;
+import me.j360.trace.core.storage.StorageComponent;
 
 import java.util.List;
 
-import static zipkin.TestObjects.DAY;
-import static zipkin.TestObjects.TODAY;
-import static zipkin.internal.Util.midnightUTC;
+import static me.j360.trace.core.internal.Util.midnightUTC;
+
 
 public class ElasticsearchDependenciesTest extends DependenciesTest {
 

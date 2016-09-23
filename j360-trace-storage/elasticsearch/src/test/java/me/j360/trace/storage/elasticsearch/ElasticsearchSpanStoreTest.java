@@ -13,8 +13,8 @@
  */
 package me.j360.trace.storage.elasticsearch;
 
-import zipkin.storage.SpanStoreTest;
-import zipkin.storage.StorageComponent;
+
+import me.j360.trace.core.storage.StorageComponent;
 
 public class ElasticsearchSpanStoreTest extends SpanStoreTest {
 

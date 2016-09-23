@@ -36,10 +36,17 @@
     - kafka
     - http
     - mq
-    - local（logAppender接口）
+    - log
+
+* storage collector
+    - kafka
+    - httpserver
+    - mq
+
 * storage 存储
+    - elasticsearch
     - mongodb
-    - log（console，file）
+    - inMemory
 
 
 * trace点

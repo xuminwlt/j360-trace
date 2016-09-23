@@ -11,23 +11,28 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package me.j360.trace.storage.elasticsearch;
+package zipkin.internal;
 
-import me.j360.trace.core.Component;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import org.junit.Test;
+import zipkin.DependencyLink;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ElasticsearchStorageTest {
-
+public final class DependenciesTest {
   @Test
-  public void check_failsInsteadOfThrowing() {
-    Component.CheckResult result =
-        ElasticsearchStorage.builder().cluster("1.1.1.1").build().check();
+  public void dependenciesRoundTrip() throws IOException {
+    Dependencies dependencies = Dependencies.create(1L, 2L, asList(
+        DependencyLink.create("foo", "bar", 2),
+        DependencyLink.create("bar", "baz", 3)
+    ));
 
-    assertThat(result.ok).isFalse();
-    assertThat(result.exception)
-        .isInstanceOf(NoNodeAvailableException.class);
+    ByteBuffer bytes = dependencies.toThrift();
+    assertThat(Dependencies.fromThrift(bytes))
+        .isEqualTo(dependencies);
+
+    assertThat(bytes.remaining()).isZero();
   }
 }

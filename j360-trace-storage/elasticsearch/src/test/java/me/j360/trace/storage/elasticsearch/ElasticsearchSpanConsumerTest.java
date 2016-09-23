@@ -15,18 +15,17 @@ package me.j360.trace.storage.elasticsearch;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
+import me.j360.trace.core.Annotation;
+import me.j360.trace.core.Codec;
+import me.j360.trace.core.Span;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Before;
 import org.junit.Test;
-import zipkin.Annotation;
-import zipkin.Codec;
-import zipkin.Span;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static zipkin.Constants.SERVER_RECV;
-import static zipkin.Constants.SERVER_SEND;
-import static zipkin.TestObjects.*;
 
 public class ElasticsearchSpanConsumerTest {
 

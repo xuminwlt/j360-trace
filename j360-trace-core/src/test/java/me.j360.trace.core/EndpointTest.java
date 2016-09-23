@@ -11,23 +11,35 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package me.j360.trace.storage.elasticsearch;
+package me.j360.trace.core;
 
-import me.j360.trace.core.Component;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ElasticsearchStorageTest {
+public class EndpointTest {
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   @Test
-  public void check_failsInsteadOfThrowing() {
-    Component.CheckResult result =
-        ElasticsearchStorage.builder().cluster("1.1.1.1").build().check();
+  public void messageWhenMissingServiceName() {
+    thrown.expect(NullPointerException.class);
+    thrown.expectMessage("serviceName");
 
-    assertThat(result.ok).isFalse();
-    assertThat(result.exception)
-        .isInstanceOf(NoNodeAvailableException.class);
+    Endpoint.builder().ipv4(127 << 24 | 1).build();
+  }
+
+  @Test
+  public void missingIpv4CoercesTo0() {
+    assertThat(Endpoint.builder().serviceName("foo").build().ipv4)
+        .isEqualTo(0);
+  }
+
+  @Test
+  public void lowercasesServiceName() {
+    assertThat(Endpoint.builder().serviceName("fFf").ipv4(127 << 24 | 1).build().serviceName)
+        .isEqualTo("fff");
   }
 }

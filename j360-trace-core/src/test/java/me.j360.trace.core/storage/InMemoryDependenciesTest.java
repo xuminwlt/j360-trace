@@ -11,23 +11,17 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package me.j360.trace.storage.elasticsearch;
+package zipkin.storage;
 
-import me.j360.trace.core.Component;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.junit.Test;
+public class InMemoryDependenciesTest extends DependenciesTest {
+  final InMemoryStorage storage = new InMemoryStorage();
 
-import static org.assertj.core.api.Assertions.assertThat;
+  @Override protected StorageComponent storage() {
+    return storage;
+  }
 
-public class ElasticsearchStorageTest {
-
-  @Test
-  public void check_failsInsteadOfThrowing() {
-    Component.CheckResult result =
-        ElasticsearchStorage.builder().cluster("1.1.1.1").build().check();
-
-    assertThat(result.ok).isFalse();
-    assertThat(result.exception)
-        .isInstanceOf(NoNodeAvailableException.class);
+  @Override
+  public void clear() {
+    storage.clear();
   }
 }
