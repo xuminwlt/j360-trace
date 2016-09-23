@@ -473,7 +473,7 @@ public final class JsonCodec implements Codec {
     }
   }
 
-  /*static final JsonAdapter<DependencyLink> DEPENDENCY_LINK_ADAPTER = new JsonAdapter<DependencyLink>() {
+  static final JsonAdapter<DependencyLink> DEPENDENCY_LINK_ADAPTER = new JsonAdapter<DependencyLink>() {
     @Override
     public DependencyLink fromJson(JsonReader reader) throws IOException {
       DependencyLink.Builder result = DependencyLink.builder();
@@ -540,7 +540,7 @@ public final class JsonCodec implements Codec {
     writeList(DEPENDENCY_LINK_ADAPTER, value, result);
     return result.toByteArray();
   }
-*/
+
   static final JsonAdapter<String> STRING_ADAPTER = new JsonAdapter<String>() {
 
     @Override
