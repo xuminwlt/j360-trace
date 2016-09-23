@@ -2,6 +2,7 @@ package me.j360.trace.collector.kafka;
 
 import com.google.auto.value.AutoValue;
 import me.j360.trace.collector.core.AbstractSpanCollector;
+import me.j360.trace.collector.core.EmptySpanCollectorMetricsHandler;
 import me.j360.trace.collector.core.SpanCollectorMetricsHandler;
 import me.j360.trace.collector.core.module.SpanCodec;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -94,8 +95,8 @@ public final class KafkaSpanCollector extends AbstractSpanCollector {
   }
 
   @Override
-  protected void sendSpans(byte[] thrift) throws IOException {
-    producer.send(new ProducerRecord<byte[], byte[]>(this.topic, thrift));
+  protected void sendSpans(byte[] bytes) throws IOException {
+    producer.send(new ProducerRecord<byte[], byte[]>(this.topic, bytes));
   }
 
   @Override
