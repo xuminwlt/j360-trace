@@ -11,10 +11,12 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package zipkin.internal;
+package me.j360.trace.core.internal;
 
 import java.io.IOException;
 import java.util.List;
+
+import me.j360.trace.core.internal.JsonCodec;
 import org.junit.Test;
 import zipkin.BinaryAnnotation;
 import zipkin.Codec;

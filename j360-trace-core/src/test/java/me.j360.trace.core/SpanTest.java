@@ -22,7 +22,6 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static zipkin.TestObjects.APP_ENDPOINT;
 
 public class SpanTest {
 

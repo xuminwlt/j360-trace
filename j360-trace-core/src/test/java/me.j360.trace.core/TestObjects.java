@@ -13,9 +13,7 @@
  */
 package me.j360.trace.core;
 
-
 import me.j360.trace.core.internal.ApplyTimestampAndDuration;
-
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static me.j360.trace.core.internal.Util.midnightUTC;
+import static me.j360.trace.core.Constants.*;
 
 public final class TestObjects {
 
@@ -74,7 +73,7 @@ public final class TestObjects {
       DependencyLink.builder().parent("web").child("app").callCount(1).build(),
       DependencyLink.builder().parent("app").child("db").callCount(1).build()
   );
-  public static final Dependencies DEPENDENCIES = Dependencies.create(TODAY, TODAY + 1000, LINKS);
+  //public static final Dependencies DEPENDENCIES = Dependencies.create(TODAY, TODAY + 1000, LINKS);
 
   static final Span.Builder spanBuilder = spanBuilder();
 

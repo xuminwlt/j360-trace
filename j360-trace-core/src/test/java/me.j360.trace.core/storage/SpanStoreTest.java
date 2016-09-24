@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package zipkin.storage;
+package me.j360.trace.core.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,24 +24,16 @@ import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import me.j360.trace.core.Span;
+import me.j360.trace.core.internal.CallbackCaptor;
 import org.junit.Before;
 import org.junit.Test;
-import zipkin.Annotation;
-import zipkin.BinaryAnnotation;
-import zipkin.Endpoint;
-import zipkin.Span;
-import zipkin.TestObjects;
-import zipkin.internal.CallbackCaptor;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static zipkin.Constants.CLIENT_RECV;
-import static zipkin.Constants.CLIENT_SEND;
-import static zipkin.Constants.LOCAL_COMPONENT;
-import static zipkin.Constants.SERVER_RECV;
-import static zipkin.Constants.SERVER_SEND;
 
 /**
  * Base test for {@link SpanStore} implementations. Subtypes should create a connection to a real

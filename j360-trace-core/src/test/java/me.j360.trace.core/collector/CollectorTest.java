@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package zipkin.collector;
+package me.j360.trace.core.collector;
 
 import java.util.ArrayList;
 import java.util.List;

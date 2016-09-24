@@ -11,8 +11,9 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package zipkin.internal;
+package me.j360.trace.core.internal;
 
+import me.j360.trace.core.internal.DependencyLinkSpan;
 import org.junit.Test;
 import zipkin.Constants;
 import zipkin.internal.DependencyLinkSpan.Kind;
