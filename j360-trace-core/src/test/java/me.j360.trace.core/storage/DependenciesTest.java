@@ -11,37 +11,20 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package zipkin.storage;
+package me.j360.trace.core.storage;
 
 import java.util.List;
+
+import me.j360.trace.core.Span;
+import me.j360.trace.core.internal.CallbackCaptor;
+import me.j360.trace.core.storage.SpanStore;
+import me.j360.trace.core.storage.StorageComponent;
 import org.junit.Before;
 import org.junit.Test;
-import zipkin.Annotation;
-import zipkin.BinaryAnnotation;
-import zipkin.Constants;
-import zipkin.DependencyLink;
-import zipkin.Endpoint;
-import zipkin.Span;
-import zipkin.internal.ApplyTimestampAndDuration;
-import zipkin.internal.CallbackCaptor;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static zipkin.Constants.CLIENT_ADDR;
-import static zipkin.Constants.CLIENT_RECV;
-import static zipkin.Constants.CLIENT_SEND;
-import static zipkin.Constants.SERVER_ADDR;
-import static zipkin.Constants.SERVER_RECV;
-import static zipkin.Constants.SERVER_SEND;
-import static zipkin.TestObjects.APP_ENDPOINT;
-import static zipkin.TestObjects.DAY;
-import static zipkin.TestObjects.DB_ENDPOINT;
-import static zipkin.TestObjects.DEPENDENCIES;
-import static zipkin.TestObjects.LINKS;
-import static zipkin.TestObjects.TODAY;
-import static zipkin.TestObjects.TRACE;
-import static zipkin.TestObjects.WEB_ENDPOINT;
 
 /**
  * Base test for {@link SpanStore} implementations that support dependency aggregation. Subtypes
