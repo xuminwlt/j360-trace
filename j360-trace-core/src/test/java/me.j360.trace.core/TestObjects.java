@@ -13,9 +13,9 @@
  */
 package me.j360.trace.core;
 
-import me.j360.trace.core.*;
-import me.j360.trace.core.TraceKeys;
 import me.j360.trace.core.internal.ApplyTimestampAndDuration;
+import me.j360.trace.core.internal.Dependencies;
+
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static me.j360.trace.core.internal.Util.midnightUTC;
-import static me.j360.trace.core.Constants.*;
 
 public final class TestObjects {
 
@@ -50,24 +49,24 @@ public final class TestObjects {
 
   public static final List<Span> TRACE = asList(
       Span.builder().traceId(WEB_SPAN_ID).id(WEB_SPAN_ID).name("get")
-          .addAnnotation(Annotation.create(TODAY * 1000, SERVER_RECV, WEB_ENDPOINT))
-          .addAnnotation(Annotation.create((TODAY + 350) * 1000, SERVER_SEND, WEB_ENDPOINT))
+          .addAnnotation(Annotation.create(TODAY * 1000, Constants.SERVER_RECV, WEB_ENDPOINT))
+          .addAnnotation(Annotation.create((TODAY + 350) * 1000, Constants.SERVER_SEND, WEB_ENDPOINT))
           .build(),
       Span.builder().traceId(WEB_SPAN_ID).parentId(WEB_SPAN_ID).id(APP_SPAN_ID).name("get")
-          .addAnnotation(Annotation.create((TODAY + 50) * 1000, CLIENT_SEND, WEB_ENDPOINT))
-          .addAnnotation(Annotation.create((TODAY + 100) * 1000, SERVER_RECV, APP_ENDPOINT))
-          .addAnnotation(Annotation.create((TODAY + 250) * 1000, SERVER_SEND, APP_ENDPOINT))
-          .addAnnotation(Annotation.create((TODAY + 300) * 1000, CLIENT_RECV, WEB_ENDPOINT))
-          .addBinaryAnnotation(BinaryAnnotation.address(CLIENT_ADDR, WEB_ENDPOINT))
-          .addBinaryAnnotation(BinaryAnnotation.address(SERVER_ADDR, APP_ENDPOINT))
+          .addAnnotation(Annotation.create((TODAY + 50) * 1000, Constants.CLIENT_SEND, WEB_ENDPOINT))
+          .addAnnotation(Annotation.create((TODAY + 100) * 1000, Constants.SERVER_RECV, APP_ENDPOINT))
+          .addAnnotation(Annotation.create((TODAY + 250) * 1000, Constants.SERVER_SEND, APP_ENDPOINT))
+          .addAnnotation(Annotation.create((TODAY + 300) * 1000, Constants.CLIENT_RECV, WEB_ENDPOINT))
+          .addBinaryAnnotation(BinaryAnnotation.address(Constants.CLIENT_ADDR, WEB_ENDPOINT))
+          .addBinaryAnnotation(BinaryAnnotation.address(Constants.SERVER_ADDR, APP_ENDPOINT))
           .build(),
       Span.builder().traceId(WEB_SPAN_ID).parentId(APP_SPAN_ID).id(DB_SPAN_ID).name("query")
-          .addAnnotation(Annotation.create((TODAY + 150) * 1000, CLIENT_SEND, APP_ENDPOINT))
-          .addAnnotation(Annotation.create((TODAY + 200) * 1000, CLIENT_RECV, APP_ENDPOINT))
+          .addAnnotation(Annotation.create((TODAY + 150) * 1000, Constants.CLIENT_SEND, APP_ENDPOINT))
+          .addAnnotation(Annotation.create((TODAY + 200) * 1000, Constants.CLIENT_RECV, APP_ENDPOINT))
           .addAnnotation(Annotation.create((TODAY + 200) * 1000, "⻩", APP_ENDPOINT))
-          .addBinaryAnnotation(BinaryAnnotation.address(CLIENT_ADDR, APP_ENDPOINT))
-          .addBinaryAnnotation(BinaryAnnotation.address(SERVER_ADDR, DB_ENDPOINT))
-          .addBinaryAnnotation(BinaryAnnotation.create(ERROR, "\uD83D\uDCA9", APP_ENDPOINT))
+          .addBinaryAnnotation(BinaryAnnotation.address(Constants.CLIENT_ADDR, APP_ENDPOINT))
+          .addBinaryAnnotation(BinaryAnnotation.address(Constants.SERVER_ADDR, DB_ENDPOINT))
+          .addBinaryAnnotation(BinaryAnnotation.create(Constants.ERROR, "\uD83D\uDCA9", APP_ENDPOINT))
           .build()
   ).stream().map(ApplyTimestampAndDuration::apply).collect(toList());
 
@@ -75,15 +74,15 @@ public final class TestObjects {
       DependencyLink.builder().parent("web").child("app").callCount(1).build(),
       DependencyLink.builder().parent("app").child("db").callCount(1).build()
   );
-  //public static final Dependencies DEPENDENCIES = Dependencies.create(TODAY, TODAY + 1000, LINKS);
+  public static final Dependencies DEPENDENCIES = Dependencies.create(TODAY, TODAY + 1000, LINKS);
 
   static final Span.Builder spanBuilder = spanBuilder();
 
   /** Reuse a builder as it is significantly slows tests to create 100000 of these! */
   static Span.Builder spanBuilder() {
     Endpoint e = Endpoint.create("service", 127 << 24 | 1, 8080);
-    Annotation sr = Annotation.create(System.currentTimeMillis() * 1000, SERVER_RECV, e);
-    Annotation ss = Annotation.create(sr.timestamp + 1000, SERVER_SEND, e);
+    Annotation sr = Annotation.create(System.currentTimeMillis() * 1000, Constants.SERVER_RECV, e);
+    Annotation ss = Annotation.create(sr.timestamp + 1000, Constants.SERVER_SEND, e);
     BinaryAnnotation ba = BinaryAnnotation.create(TraceKeys.HTTP_METHOD, "GET", e);
     return Span.builder().name("get").addAnnotation(sr).addAnnotation(ss).addBinaryAnnotation(ba);
   }
