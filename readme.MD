@@ -46,7 +46,6 @@
 * storage 存储
     - elasticsearch
     - mongodb
-    - inMemory
 
 
 * trace点
