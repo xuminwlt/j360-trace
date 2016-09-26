@@ -73,3 +73,8 @@
 * example
     - springmvc
     - dubbo
+    - springmvc-collector-kafkaProductor ???
+    - springmvc-dubbo-collector-kafkaProductor ???
+    - kafkaConsumerStream-storage-elasticsearch-native-start
+    - kafkaConsumerStream-storage-elasticsearch-springboot-start
+
