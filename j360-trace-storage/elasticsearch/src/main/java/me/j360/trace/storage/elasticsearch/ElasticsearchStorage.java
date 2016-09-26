@@ -32,7 +32,7 @@ import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static me.j360.trace.core.internal.Util.checkNotNull;
 
 public final class ElasticsearchStorage
-    extends LazyGuavaStorageComponent<ElasticsearchSpanStore, ElasticsearchSpanConsumer> {
+        extends LazyGuavaStorageComponent<ElasticsearchSpanStore, ElasticsearchSpanConsumer> {
 
   /**
    * Internal flag that allows you read-your-writes consistency during tests. With Elasticsearch, it
@@ -47,7 +47,7 @@ public final class ElasticsearchStorage
 
   public static final class Builder {
     String cluster = "elasticsearch";
-    List<String> hosts = Collections.singletonList("127.0.0.1:9300");
+    List<String> hosts = Collections.singletonList("localhost:9300");
     String index = "zipkin";
     int indexShards = 5;
     int indexReplicas = 1;
@@ -139,13 +139,13 @@ public final class ElasticsearchStorage
     BulkRequestBuilder request = lazyClient.get().prepareBulk();
     for (DependencyLink link : links) {
       request.add(lazyClient.get().prepareIndex(
-          indexNameFormatter.indexNameForTimestamp(midnight),
-          ElasticsearchConstants.DEPENDENCY_LINK)
-          .setId(link.parent + "|" + link.child) // Unique constraint
-          .setSource(
-              "parent", link.parent,
-              "child", link.child,
-              "callCount", link.callCount));
+              indexNameFormatter.indexNameForTimestamp(midnight),
+              ElasticsearchConstants.DEPENDENCY_LINK)
+              .setId(link.parent + "|" + link.child) // Unique constraint
+              .setSource(
+                      "parent", link.parent,
+                      "child", link.child,
+                      "callCount", link.callCount));
     }
     request.execute().actionGet();
     lazyClient.get().admin().indices().flush(new FlushRequest()).actionGet();
@@ -153,14 +153,14 @@ public final class ElasticsearchStorage
 
   @VisibleForTesting void clear() {
     lazyClient.get().admin().indices().delete(new DeleteIndexRequest(indexNameFormatter.catchAll()))
-        .actionGet();
+            .actionGet();
     lazyClient.get().admin().indices().flush(new FlushRequest()).actionGet();
   }
 
   @Override public CheckResult check() {
     try {
       ClusterHealthResponse health = getUnchecked(lazyClient.get()
-          .admin().cluster().prepareHealth(indexNameFormatter.catchAll()).execute());
+              .admin().cluster().prepareHealth(indexNameFormatter.catchAll()).execute());
       checkState(health.getStatus() != ClusterHealthStatus.RED, "Health status is RED");
     } catch (RuntimeException e) {
       return CheckResult.failed(e);

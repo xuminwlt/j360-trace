@@ -107,14 +107,14 @@ public final class KafkaCollector implements CollectorComponent {
       return new KafkaCollector(this);
     }
 
-    Builder() {
+    public Builder() {
     }
   }
 
   final LazyCloseable<ZookeeperConsumerConnector> connector;
   final LazyStreams streams;
 
-  KafkaCollector(Builder builder) {
+  public KafkaCollector(Builder builder) {
     connector = new LazyConnector(builder);
     streams = new LazyStreams(builder, connector);
   }
