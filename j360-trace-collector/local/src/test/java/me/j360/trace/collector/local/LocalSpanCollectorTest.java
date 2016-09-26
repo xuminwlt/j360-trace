@@ -1,9 +1,13 @@
 package me.j360.trace.collector.local;
 
 
+import me.j360.trace.collector.core.SpanCollectorMetricsHandler;
+import me.j360.trace.collector.core.module.Span;
+import me.j360.trace.core.Component;
+import me.j360.trace.core.storage.*;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class LocalSpanCollectorTest {
   public final InMemoryStorage storage = new InMemoryStorage();
@@ -12,87 +16,6 @@ public class LocalSpanCollectorTest {
   // set flush interval to 0 so that tests can drive flushing explicitly
   LocalSpanCollector.Config config = LocalSpanCollector.Config.builder().flushInterval(0).build();
 
-  @Test
-  public void collectDoesntDoIO() throws Exception {
-    LocalSpanCollector collector = newLocalSpanCollector((spans, callback) -> {
-      throw new AssertionError("spans should only report on flush!");
-    });
-
-    collector.collect(span(1L, "foo"));
-
-    assertThat(storage.spanStore().traceIds()).isEmpty();
-  }
-
-  @Test
-  public void collectIncrementsAcceptedMetrics() throws Exception {
-    LocalSpanCollector collector = newLocalSpanCollector((spans, callback) -> {
-    });
-
-    collector.collect(span(1L, "foo"));
-
-    assertThat(metrics.acceptedSpans.get()).isEqualTo(1);
-    assertThat(metrics.droppedSpans.get()).isZero();
-  }
-
-  @Test
-  public void dropsWhenQueueIsFull() throws Exception {
-    LocalSpanCollector collector = newLocalSpanCollector((spans, callback) -> {
-    });
-
-    for (int i = 0; i < 1001; i++)
-      collector.collect(span(1L, "foo"));
-
-    collector.flush(); // manually flush the spans
-
-    assertThat(metrics.acceptedSpans.get()).isEqualTo(1001);
-    assertThat(metrics.droppedSpans.get()).isEqualTo(1);
-  }
-
-  @Test
-  public void bundlesSpansIntoOneMessage() throws Exception {
-    AtomicInteger spanCount = new AtomicInteger();
-    AtomicInteger messageCount = new AtomicInteger();
-    LocalSpanCollector collector = newLocalSpanCollector((spans, callback) -> {
-      spanCount.addAndGet(spans.size());
-      messageCount.incrementAndGet();
-    });
-
-    collector.collect(span(1L, "foo"));
-    collector.collect(span(2L, "bar"));
-
-    collector.flush(); // manually flush the spans
-
-    assertThat(spanCount.get()).isEqualTo(2);
-    assertThat(messageCount.get()).isEqualTo(1);
-  }
-
-  @Test
-  public void incrementsDroppedSpans_exceptionOnCallingThread() throws Exception {
-    LocalSpanCollector collector = newLocalSpanCollector((spans, callback) -> {
-      throw new RuntimeException("couldn't store");
-    });
-
-    collector.collect(span(1L, "foo"));
-    collector.collect(span(2L, "bar"));
-
-    collector.flush(); // manually flush the spans
-
-    assertThat(metrics.droppedSpans.get()).isEqualTo(2);
-  }
-
-  @Test
-  public void incrementsDroppedSpans_exceptionOnCallbackThread() throws Exception {
-    LocalSpanCollector collector = newLocalSpanCollector((spans, callback) -> {
-      callback.onError(new RuntimeException("couldn't store"));
-    });
-
-    collector.collect(span(1L, "foo"));
-    collector.collect(span(2L, "bar"));
-
-    collector.flush(); // manually flush the spans
-
-    assertThat(metrics.droppedSpans.get()).isEqualTo(2);
-  }
 
   class TestMetricsHander implements SpanCollectorMetricsHandler {
 
@@ -114,8 +37,8 @@ public class LocalSpanCollectorTest {
     return new Span().setTrace_id(traceId).setId(traceId).setName(spanName);
   }
 
-  static zipkin.Span zipkinSpan(long traceId, String spanName) {
-    return zipkin.Span.builder().traceId(traceId).id(traceId).name(spanName).build();
+  static me.j360.trace.core.Span zipkinSpan(long traceId, String spanName) {
+    return me.j360.trace.core.Span.builder().traceId(traceId).id(traceId).name(spanName).build();
   }
 
   LocalSpanCollector newLocalSpanCollector(AsyncSpanConsumer consumer) {
@@ -133,7 +56,7 @@ public class LocalSpanCollectorTest {
       }
 
       @Override public CheckResult check() {
-        return CheckResult.OK;
+        return Component.CheckResult.OK;
       }
 
       @Override public void close() {

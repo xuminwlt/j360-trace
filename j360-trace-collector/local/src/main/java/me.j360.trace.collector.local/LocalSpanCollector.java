@@ -4,8 +4,12 @@ import com.google.auto.value.AutoValue;
 import me.j360.trace.collector.core.FlushingSpanCollector;
 import me.j360.trace.collector.core.SpanCollectorMetricsHandler;
 import me.j360.trace.collector.core.module.Span;
+import me.j360.trace.core.storage.AsyncSpanConsumer;
+import me.j360.trace.core.storage.Callback;
+import me.j360.trace.core.storage.StorageComponent;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,8 +48,8 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
     }
   }
 
-  //private final StorageComponent storageComponent;
-  //private final SpanCollectorMetricsHandler metrics;
+  private final StorageComponent storageComponent;
+  private final SpanCollectorMetricsHandler metrics;
 
   /**
    * Create a new instance with default configuration.
@@ -54,10 +58,10 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
    * @param metrics Gets notified when spans are accepted or dropped. If you are not interested in
    *                these events you can use {@linkplain EmptySpanCollectorMetricsHandler}
    */
-  /*public static LocalSpanCollector create(StorageComponent storageComponent,
+  public static LocalSpanCollector create(StorageComponent storageComponent,
       SpanCollectorMetricsHandler metrics) {
     return new LocalSpanCollector(storageComponent, Config.builder().build(), metrics);
-  }*/
+  }
 
   /**
    * @param storageComponent spans will be written asynchronously to this
@@ -65,22 +69,22 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
    * @param metrics Gets notified when spans are accepted or dropped. If you are not interested in
    *                these events you can use {@linkplain EmptySpanCollectorMetricsHandler}
    */
-  /*public static LocalSpanCollector create(StorageComponent storageComponent, Config config,
+  public static LocalSpanCollector create(StorageComponent storageComponent, Config config,
       SpanCollectorMetricsHandler metrics) {
     return new LocalSpanCollector(storageComponent, config, metrics);
-  }*/
+  }
 
   // Visible for testing. Ex when tests need to explicitly control flushing, set interval to 0.
-  /*LocalSpanCollector(StorageComponent storageComponent, Config config,
+  LocalSpanCollector(StorageComponent storageComponent, Config config,
       SpanCollectorMetricsHandler metrics) {
     super(metrics, config.flushInterval());
     this.storageComponent = storageComponent;
     this.metrics = metrics;
-  }*/
+  }
 
-  /*@Override protected void reportSpans(final List<Span> drained) throws IOException {
+  @Override protected void reportSpans(final List<Span> drained) throws IOException {
     // Brave 3 doesn't use zipkin spans. Convert accordingly
-    List<zipkin.Span> zipkinSpans = new ArrayList<zipkin.Span>(drained.size());
+    List<me.j360.trace.core.Span> zipkinSpans = new ArrayList<me.j360.trace.core.Span>(drained.size());
     for (Span input : drained) {
       zipkinSpans.add(input.toZipkin());
     }
@@ -96,5 +100,5 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
         metrics.incrementDroppedSpans(drained.size());
       }
     });
-  }*/
+  }
 }
