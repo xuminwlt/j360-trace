@@ -15,7 +15,7 @@
         <main.basedir>${project.basedir}/..</main.basedir>
         <main.java.version>1.8</main.java.version>
         <main.signature.artifact>java18</main.signature.artifact>
-        <start-class>zipkin.server.ZipkinServer</start-class>
+        <start-class>me.j360.trace.server.ZipkinServer</start-class>
         <maven-invoker-plugin.version>2.0.0</maven-invoker-plugin.version>
     </properties>
 
@@ -114,41 +114,6 @@
     </dependencies>
 
     <profiles>
-        <profile>
-            <id>integration</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-invoker-plugin</artifactId>
-                        <version>${maven-invoker-plugin.version}</version>
-                        <configuration>
-                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                            <settingsFile>src/it/settings.xml</settingsFile>
-                            <profiles>
-                                <profile>!release</profile>
-                            </profiles>
-                            <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                            <postBuildHookScript>verify</postBuildHookScript>
-                            <addTestClassPath>true</addTestClassPath>
-                            <streamLogs>true</streamLogs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>integration-test</id>
-                                <goals>
-                                    <goal>install</goal>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <build>

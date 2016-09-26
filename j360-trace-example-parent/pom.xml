@@ -20,6 +20,7 @@
         <module>autoconfiguration-ui</module>
         <module>autoconfiguration-collector-kafka</module>
         <module>autoconfiguration-storage-elasticsearch</module>
+        <module>webserver</module>
     </modules>
 
 </project>
