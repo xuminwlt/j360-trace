@@ -1,0 +1,137 @@
+/**
+ * Copyright 2015-2016 The OpenZipkin Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package me.j360.trace.server;
+
+import me.j360.trace.core.Codec;
+import me.j360.trace.core.Span;
+import me.j360.trace.core.storage.QueryRequest;
+import me.j360.trace.core.storage.StorageComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static me.j360.trace.core.internal.Util.lowerHexToUnsignedLong;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+/**
+ * Implements the json api used by the Zipkin UI
+ *
+ * See com.twitter.zipkin.query.ZipkinQueryController
+ */
+@RestController
+@RequestMapping("/api/v1")
+@CrossOrigin("${zipkin.query.allowed-origins:*}")
+public class ZipkinQueryApiV1 {
+
+  @Autowired
+  @Value("${zipkin.query.lookback:86400000}")
+  int defaultLookback = 86400000; // 7 days in millis
+
+  /** The Cache-Control max-age (seconds) for /api/v1/services and /api/v1/spans */
+  @Value("${zipkin.query.names-max-age:300}")
+  int namesMaxAge = 300; // 5 minutes
+  volatile int serviceCount; // used as a threshold to start returning cache-control headers
+
+  private final StorageComponent storage;
+
+  @Autowired
+  public ZipkinQueryApiV1(StorageComponent storage) {
+    this.storage = storage; // don't cache spanStore here as it can cause the app to crash!
+  }
+
+  @RequestMapping(value = "/dependencies", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+  public byte[] getDependencies(@RequestParam(value = "endTs", required = true) long endTs,
+                                @RequestParam(value = "lookback", required = false) Long lookback) {
+    return Codec.JSON.writeDependencyLinks(storage.spanStore().getDependencies(endTs, lookback != null ? lookback : defaultLookback));
+  }
+
+  @RequestMapping(value = "/services", method = RequestMethod.GET)
+  public ResponseEntity<List<String>> getServiceNames() {
+    List<String> serviceNames = storage.spanStore().getServiceNames();
+    serviceCount = serviceNames.size();
+    return maybeCacheNames(serviceNames);
+  }
+
+  @RequestMapping(value = "/spans", method = RequestMethod.GET)
+  public ResponseEntity<List<String>> getSpanNames(
+      @RequestParam(value = "serviceName", required = true) String serviceName) {
+    return maybeCacheNames(storage.spanStore().getSpanNames(serviceName));
+  }
+
+  @RequestMapping(value = "/traces", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+  public byte[] getTraces(
+      @RequestParam(value = "serviceName", required = false) String serviceName,
+      @RequestParam(value = "spanName", defaultValue = "all") String spanName,
+      @RequestParam(value = "annotationQuery", required = false) String annotationQuery,
+      @RequestParam(value = "minDuration", required = false) Long minDuration,
+      @RequestParam(value = "maxDuration", required = false) Long maxDuration,
+      @RequestParam(value = "endTs", required = false) Long endTs,
+      @RequestParam(value = "lookback", required = false) Long lookback,
+      @RequestParam(value = "limit", required = false) Integer limit) {
+    QueryRequest queryRequest = QueryRequest.builder()
+        .serviceName(serviceName)
+        .spanName(spanName)
+        .parseAnnotationQuery(annotationQuery)
+        .minDuration(minDuration)
+        .maxDuration(maxDuration)
+        .endTs(endTs)
+        .lookback(lookback != null ? lookback : defaultLookback)
+        .limit(limit).build();
+
+    return Codec.JSON.writeTraces(storage.spanStore().getTraces(queryRequest));
+  }
+
+  @RequestMapping(value = "/trace/{traceId}", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+  public byte[] getTrace(@PathVariable String traceId, WebRequest request) {
+    long id = lowerHexToUnsignedLong(traceId);
+    String[] raw = request.getParameterValues("raw"); // RequestParam doesn't work for param w/o value
+    List<Span> trace = raw != null ? storage.spanStore().getRawTrace(id) : storage.spanStore().getTrace(id);
+
+    if (trace == null) {
+      throw new TraceNotFoundException(traceId, id);
+    }
+    return Codec.JSON.writeSpans(trace);
+  }
+
+  @ExceptionHandler(TraceNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public void notFound() {
+  }
+
+  static class TraceNotFoundException extends RuntimeException {
+    public TraceNotFoundException(String traceId, long id) {
+      super("Cannot find trace for id=" + traceId + ", long value=" + id);
+    }
+  }
+
+  /**
+   * We cache names if there are more than 3 services. This helps people getting started: if we
+   * cache empty results, users have more questions. We assume caching becomes a concern when zipkin
+   * is in active use, and active use usually implies more than 3 services.
+   */
+  ResponseEntity<List<String>> maybeCacheNames(List<String> names) {
+    ResponseEntity.BodyBuilder response = ResponseEntity.ok();
+    if (serviceCount > 3) {
+      response.cacheControl(CacheControl.maxAge(namesMaxAge, TimeUnit.SECONDS).mustRevalidate());
+    }
+    return response.body(names);
+  }
+}

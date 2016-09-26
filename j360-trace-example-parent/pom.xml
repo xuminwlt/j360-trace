@@ -16,6 +16,10 @@
         <module>j360-trace-example-dubbo</module>
         <module>kafka-storage-elasticsearch</module>
         <module>kafka-storage-elasticsearch-spring</module>
+        <module>staticui</module>
+        <module>autoconfiguration-ui</module>
+        <module>autoconfiguration-collector-kafka</module>
+        <module>autoconfiguration-storage-elasticsearch</module>
     </modules>
 
 </project>

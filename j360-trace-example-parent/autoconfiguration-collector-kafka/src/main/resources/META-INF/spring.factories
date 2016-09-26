@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+me.j360.trace.autoconfiguration.collector.kafka.ZipkinKafkaCollectorAutoConfiguration
