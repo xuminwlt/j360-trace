@@ -11,7 +11,11 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package zipkin.storage;
+package me.j360.trace.core.storage;
+
+import me.j360.trace.core.storage.DependenciesTest;
+import me.j360.trace.core.storage.InMemoryStorage;
+import me.j360.trace.core.storage.StorageComponent;
 
 public class InMemoryDependenciesTest extends DependenciesTest {
   final InMemoryStorage storage = new InMemoryStorage();

@@ -13,6 +13,8 @@
  */
 package me.j360.trace.core;
 
+import me.j360.trace.core.*;
+import me.j360.trace.core.TraceKeys;
 import me.j360.trace.core.internal.ApplyTimestampAndDuration;
 import java.util.List;
 import java.util.Random;
