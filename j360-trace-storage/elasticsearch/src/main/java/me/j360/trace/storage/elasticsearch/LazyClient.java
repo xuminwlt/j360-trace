@@ -41,7 +41,7 @@ final class LazyClient extends LazyCloseable<Client> {
     this.hosts = builder.hosts;
     try {
       this.indexTemplate = Resources.toString(
-          Resources.getResource("zipkin/storage/elasticsearch/zipkin_template.json"),
+          Resources.getResource("zipkin_template.json"),
           StandardCharsets.UTF_8)
           .replace("${__INDEX__}", builder.index)
           .replace("${__NUMBER_OF_SHARDS__}", String.valueOf(builder.indexShards))

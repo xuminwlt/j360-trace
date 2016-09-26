@@ -13,7 +13,9 @@
  */
 package me.j360.trace.storage.core.guava;
 
+import me.j360.trace.core.DependencyLink;
 import me.j360.trace.core.Span;
+import me.j360.trace.core.internal.Nullable;
 import me.j360.trace.core.storage.AsyncSpanStore;
 import me.j360.trace.core.storage.Callback;
 import me.j360.trace.core.storage.QueryRequest;
@@ -50,10 +52,10 @@ final class InternalGuavaToAsyncSpanStoreAdapter implements AsyncSpanStore {
     addCallback(delegate.getSpanNames(serviceName), new InternalForwardingCallback<>(callback));
   }
 
-  /*@Override public void getDependencies(long endTs, @Nullable Long lookback,
+  @Override public void getDependencies(long endTs, @Nullable Long lookback,
       Callback<List<DependencyLink>> callback) {
     addCallback(delegate.getDependencies(endTs, lookback), new InternalForwardingCallback<>(callback));
-  }*/
+  }
 
   @Override public String toString() {
     return delegate.toString();

@@ -15,6 +15,7 @@ package me.j360.trace.storage.core.guava;
 
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.ListenableFuture;
+import me.j360.trace.core.DependencyLink;
 import me.j360.trace.core.Span;
 import me.j360.trace.core.internal.Nullable;
 import me.j360.trace.core.storage.AsyncSpanStore;
@@ -66,12 +67,12 @@ final class InternalGuavaSpanStoreAdapter implements GuavaSpanStore {
     return result;
   }
 
-  /*@Override public ListenableFuture<List<DependencyLink>> getDependencies(long endTs,
-      @Nullable Long lookback) {
+  @Override public ListenableFuture<List<DependencyLink>> getDependencies(long endTs,
+                                                                          @Nullable Long lookback) {
     CallbackListenableFuture<List<DependencyLink>> result = new CallbackListenableFuture<>();
     delegate.getDependencies(endTs, lookback, result);
     return result;
-  }*/
+  }
 
   @Override public String toString() {
     return delegate.toString();

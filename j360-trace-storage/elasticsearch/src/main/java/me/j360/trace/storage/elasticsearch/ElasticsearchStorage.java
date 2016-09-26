@@ -47,7 +47,7 @@ public final class ElasticsearchStorage
 
   public static final class Builder {
     String cluster = "elasticsearch";
-    List<String> hosts = Collections.singletonList("localhost:9300");
+    List<String> hosts = Collections.singletonList("127.0.0.1:9300");
     String index = "zipkin";
     int indexShards = 5;
     int indexReplicas = 1;

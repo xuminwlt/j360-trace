@@ -22,6 +22,7 @@ import me.j360.trace.core.storage.AsyncSpanConsumer;
 import me.j360.trace.core.storage.AsyncSpanStore;
 import me.j360.trace.core.storage.SpanStore;
 import me.j360.trace.core.storage.StorageComponent;
+import me.j360.trace.core.TestObjects;
 import org.I0Itec.zkclient.exception.ZkTimeoutException;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -33,8 +34,8 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static me.j360.trace.core.TestObjects.TRACE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static me.j360.trace.storage.core.kafka.TestObjects.*;
 
 public class KafkaCollectorTest {
   @Rule

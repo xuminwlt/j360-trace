@@ -45,5 +45,58 @@
         </dependency>
     </dependencies>
 
-
+    <build>
+        <plugins>
+            <!-- Use of okio and moshi are internal only -->
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadeTestJar>false</shadeTestJar>
+                            <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>com.google.code.gson:gson</artifact>
+                                    <includes>
+                                        <include>com/google/gson/stream/JsonReader*.class</include>
+                                        <include>com/google/gson/stream/JsonToken.class</include>
+                                        <include>com/google/gson/stream/MalformedJsonException.class</include>
+                                        <include>com/google/gson/internal/JsonReaderInternalAccess.class</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <!-- don't include pom files, some are kilobytes -->
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google.gson</pattern>
+                                    <shadedPattern>zipkin.internal.gson</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
