@@ -40,7 +40,7 @@ public class ConvertSpanNameResponseTest {
 
   @Test
   public void emptyWhenAggregatesAreNull() {
-    assertThat(ConvertSpanNameResponse.INSTANCE.apply(response))
+    assertThat(ElasticsearchSpanStore.ConvertSpanNameResponse.INSTANCE.apply(response))
         .isEmpty();
   }
 
@@ -48,7 +48,7 @@ public class ConvertSpanNameResponseTest {
   public void emptyWhenMissingNameAgg() {
     when(response.getAggregations()).thenReturn(aggregations);
 
-    assertThat(ConvertSpanNameResponse.INSTANCE.apply(response))
+    assertThat(ElasticsearchSpanStore.ConvertSpanNameResponse.INSTANCE.apply(response))
         .isEmpty();
   }
 
@@ -61,7 +61,7 @@ public class ConvertSpanNameResponseTest {
     when(terms.getBuckets()).thenReturn(asList(bucket));
     when(bucket.getKeyAsString()).thenReturn("service");
 
-    assertThat(ConvertSpanNameResponse.INSTANCE.apply(response))
+    assertThat(ElasticsearchSpanStore.ConvertSpanNameResponse.INSTANCE.apply(response))
         .containsExactly("service");
   }
 }

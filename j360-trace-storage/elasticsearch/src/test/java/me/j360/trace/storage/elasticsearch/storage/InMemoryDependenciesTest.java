@@ -11,9 +11,8 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package me.j360.trace.core.storage;
+package me.j360.trace.storage.elasticsearch.storage;
 
-import me.j360.trace.core.storage.DependenciesTest;
 import me.j360.trace.core.storage.InMemoryStorage;
 import me.j360.trace.core.storage.StorageComponent;
 

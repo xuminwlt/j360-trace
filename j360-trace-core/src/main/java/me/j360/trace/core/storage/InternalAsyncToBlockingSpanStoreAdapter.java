@@ -14,8 +14,10 @@
 package me.j360.trace.core.storage;
 
 
+import me.j360.trace.core.DependencyLink;
 import me.j360.trace.core.Span;
 import me.j360.trace.core.internal.CallbackCaptor;
+import me.j360.trace.core.internal.Nullable;
 
 import java.util.List;
 
@@ -56,11 +58,11 @@ final class InternalAsyncToBlockingSpanStoreAdapter implements SpanStore {
     return captor.get();
   }
 
-  /*@Override public List<DependencyLink> getDependencies(long endTs, @Nullable Long lookback) {
+  @Override public List<DependencyLink> getDependencies(long endTs, @Nullable Long lookback) {
     CallbackCaptor<List<DependencyLink>> captor = new CallbackCaptor<List<DependencyLink>>();
     delegate.getDependencies(endTs, lookback, captor);
     return captor.get();
-  }*/
+  }
 
   @Override public String toString() {
     return delegate.toString();

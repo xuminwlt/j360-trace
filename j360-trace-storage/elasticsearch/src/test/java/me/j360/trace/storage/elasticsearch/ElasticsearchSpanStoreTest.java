@@ -15,6 +15,7 @@ package me.j360.trace.storage.elasticsearch;
 
 
 import me.j360.trace.core.storage.StorageComponent;
+import me.j360.trace.storage.elasticsearch.storage.SpanStoreTest;
 
 public class ElasticsearchSpanStoreTest extends SpanStoreTest {
 

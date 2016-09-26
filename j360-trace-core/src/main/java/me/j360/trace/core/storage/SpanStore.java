@@ -14,6 +14,7 @@
 package me.j360.trace.core.storage;
 
 
+import me.j360.trace.core.DependencyLink;
 import me.j360.trace.core.Span;
 import me.j360.trace.core.internal.Nullable;
 
@@ -85,5 +86,5 @@ public interface SpanStore {
    * @return dependency links in an interval contained by (endTs - lookback) or empty if none are
    *         found
    */
-  //List<DependencyLink> getDependencies(long endTs, @Nullable Long lookback);
+  List<DependencyLink> getDependencies(long endTs, @Nullable Long lookback);
 }

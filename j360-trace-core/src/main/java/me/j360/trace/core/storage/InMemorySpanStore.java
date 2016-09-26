@@ -15,6 +15,7 @@ package me.j360.trace.core.storage;
 
 import me.j360.trace.core.Annotation;
 import me.j360.trace.core.BinaryAnnotation;
+import me.j360.trace.core.DependencyLink;
 import me.j360.trace.core.Span;
 import me.j360.trace.core.internal.*;
 
@@ -128,7 +129,7 @@ public final class InMemorySpanStore implements SpanStore {
     return sortedList(serviceToSpanNames.get(service));
   }
 
-  /*@Override
+  @Override
   public List<DependencyLink> getDependencies(long endTs, @Nullable Long lookback) {
     endTs *= 1000;
     if (lookback == null) {
@@ -156,7 +157,7 @@ public final class InMemorySpanStore implements SpanStore {
       linksBuilder.putTrace(linkSpans.iterator());
     }
     return linksBuilder.link();
-  }*/
+  }
 
   static boolean test(QueryRequest request, List<Span> spans) {
     Long timestamp = spans.get(0).timestamp;

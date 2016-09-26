@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package me.j360.trace.core.storage;
+package me.j360.trace.storage.elasticsearch.storage;
 
 import java.util.List;
 
@@ -20,6 +20,7 @@ import me.j360.trace.core.internal.ApplyTimestampAndDuration;
 import me.j360.trace.core.internal.CallbackCaptor;
 import me.j360.trace.core.storage.SpanStore;
 import me.j360.trace.core.storage.StorageComponent;
+import me.j360.trace.storage.core.TestObjects;
 import org.junit.Before;
 import org.junit.Test;
 

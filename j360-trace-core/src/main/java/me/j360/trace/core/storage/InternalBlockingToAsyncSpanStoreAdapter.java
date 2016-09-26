@@ -14,7 +14,9 @@
 package me.j360.trace.core.storage;
 
 
+import me.j360.trace.core.DependencyLink;
 import me.j360.trace.core.Span;
+import me.j360.trace.core.internal.Nullable;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -91,7 +93,7 @@ final class InternalBlockingToAsyncSpanStoreAdapter implements AsyncSpanStore {
     });
   }
 
-  /*@Override public void getDependencies(final long endTs, final @Nullable Long lookback,
+  @Override public void getDependencies(final long endTs, final @Nullable Long lookback,
       Callback<List<DependencyLink>> callback) {
     executor.execute(new InternalCallbackRunnable<List<DependencyLink>>(callback) {
       @Override List<DependencyLink> complete() {
@@ -102,7 +104,7 @@ final class InternalBlockingToAsyncSpanStoreAdapter implements AsyncSpanStore {
         return "getDependencies(" + endTs + lookback == null ? ")" : ", " + lookback + ")";
       }
     });
-  }*/
+  }
 
   @Override public String toString() {
     return delegate.toString();

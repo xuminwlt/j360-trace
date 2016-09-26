@@ -14,6 +14,7 @@
 package me.j360.trace.core.storage;
 
 
+import me.j360.trace.core.DependencyLink;
 import me.j360.trace.core.Span;
 import me.j360.trace.core.internal.Nullable;
 
@@ -58,5 +59,5 @@ public interface AsyncSpanStore {
   /**
    * Version of {@link SpanStore#getDependencies} that accepts {@link Callback}.
    */
-  //void getDependencies(long endTs, @Nullable Long lookback, Callback<List<DependencyLink>> callback);
+  void getDependencies(long endTs, @Nullable Long lookback, Callback<List<DependencyLink>> callback);
 }

@@ -17,7 +17,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import me.j360.trace.core.Annotation;
 import me.j360.trace.core.Codec;
+import me.j360.trace.core.Constants;
 import me.j360.trace.core.Span;
+import me.j360.trace.storage.core.TestObjects;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,30 +42,11 @@ public class ElasticsearchSpanConsumerTest {
     storage.clear();
   }
 
-  @Test
-  public void spanGoesIntoADailyIndex_whenTimestampIsDerived() {
-    long twoDaysAgo = (TODAY - 2 * DAY);
 
-    Span span = Span.builder().traceId(20L).id(20L).name("get")
-        .addAnnotation(Annotation.create(twoDaysAgo * 1000, SERVER_RECV, WEB_ENDPOINT))
-        .addAnnotation(Annotation.create(TODAY * 1000, SERVER_SEND, WEB_ENDPOINT))
-        .build();
-
-    accept(span);
-
-    SearchResponse indexFromTwoDaysAgo = storage.client()
-        .prepareSearch(storage.indexNameFormatter.indexNameForTimestamp(twoDaysAgo))
-        .setTypes(ElasticsearchConstants.SPAN)
-        .get();
-
-    // make sure the span went into an index corresponding to its first annotation timestamp
-    assertThat(indexFromTwoDaysAgo.getHits().getTotalHits())
-        .isEqualTo(1);
-  }
 
   @Test
   public void spanGoesIntoADailyIndex_whenTimestampIsExplicit() {
-    long twoDaysAgo = (TODAY - 2 * DAY);
+    long twoDaysAgo = (TestObjects.TODAY - 2 * TestObjects.DAY);
 
     Span span = Span.builder().traceId(20L).id(20L).name("get")
         .timestamp(twoDaysAgo * 1000).build();
@@ -87,7 +70,7 @@ public class ElasticsearchSpanConsumerTest {
     accept(span);
 
     SearchResponse indexFromToday = storage.client()
-        .prepareSearch(storage.indexNameFormatter.indexNameForTimestamp(TODAY))
+        .prepareSearch(storage.indexNameFormatter.indexNameForTimestamp(TestObjects.TODAY))
         .setTypes(ElasticsearchConstants.SPAN)
         .get();
 
@@ -98,14 +81,14 @@ public class ElasticsearchSpanConsumerTest {
 
   @Test
   public void searchByTimestampMillis() {
-    Span span = Span.builder().timestamp(TODAY * 1000).traceId(20L).id(20L).name("get").build();
+    Span span = Span.builder().timestamp(TestObjects.TODAY * 1000).traceId(20L).id(20L).name("get").build();
 
     accept(span);
 
     SearchResponse indexFromToday = storage.client()
-        .prepareSearch(storage.indexNameFormatter.indexNameForTimestamp(TODAY))
+        .prepareSearch(storage.indexNameFormatter.indexNameForTimestamp(TestObjects.TODAY))
         .setTypes(ElasticsearchConstants.SPAN)
-        .setQuery(termQuery("timestamp_millis", TODAY))
+        .setQuery(termQuery("timestamp_millis", TestObjects.TODAY))
         .get();
 
     assertThat(indexFromToday.getHits().getTotalHits())
@@ -115,14 +98,14 @@ public class ElasticsearchSpanConsumerTest {
   @Test
   public void prefixWithTimestampMillis() {
     Span span = Span.builder().traceId(20L).id(20L).name("get")
-        .timestamp(TODAY * 1000).build();
+        .timestamp(TestObjects.TODAY * 1000).build();
 
     byte[] result =
-        ElasticsearchSpanConsumer.prefixWithTimestampMillis(Codec.JSON.writeSpan(span), TODAY);
+        ElasticsearchSpanConsumer.prefixWithTimestampMillis(Codec.JSON.writeSpan(span), TestObjects.TODAY);
 
     String json = new String(result);
     assertThat(json)
-        .startsWith("{\"timestamp_millis\":" + Long.toString(TODAY) + ",\"traceId\":");
+        .startsWith("{\"timestamp_millis\":" + Long.toString(TestObjects.TODAY) + ",\"traceId\":");
 
     assertThat(Codec.JSON.readSpan(json.getBytes()))
         .isEqualTo(span); // ignores timestamp_millis field
