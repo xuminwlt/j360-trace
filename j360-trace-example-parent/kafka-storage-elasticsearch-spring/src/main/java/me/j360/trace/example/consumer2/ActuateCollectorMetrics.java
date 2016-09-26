@@ -11,11 +11,12 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package me.j360.trace.example.consumer1;
-
+package me.j360.trace.example.consumer2;
 
 import me.j360.trace.core.collector.CollectorMetrics;
 import me.j360.trace.core.internal.Nullable;
+import org.springframework.boot.actuate.metrics.CounterService;
+import org.springframework.boot.actuate.metrics.GaugeService;
 
 import static me.j360.trace.core.internal.Util.checkNotNull;
 
@@ -42,8 +43,8 @@ import static me.j360.trace.core.internal.Util.checkNotNull;
  */
 final class ActuateCollectorMetrics implements CollectorMetrics {
 
-  //private final CounterService counterService;
-  //private final GaugeService gaugeService;
+  private final CounterService counterService;
+  private final GaugeService gaugeService;
   private final String messages;
   private final String messagesDropped;
   private final String messageBytes;
@@ -52,21 +53,9 @@ final class ActuateCollectorMetrics implements CollectorMetrics {
   private final String spans;
   private final String spansDropped;
 
-  ActuateCollectorMetrics(@Nullable String transport) {
-    String footer = transport == null ? "" : "." + transport;
-    this.messages = "zipkin_collector.messages" + footer;
-    this.messagesDropped = "zipkin_collector.messages_dropped" + footer;
-    this.messageBytes = "zipkin_collector.message_bytes" + footer;
-    this.messageSpans = "zipkin_collector.message_spans" + footer;
-    this.bytes = "zipkin_collector.bytes" + footer;
-    this.spans = "zipkin_collector.spans" + footer;
-    this.spansDropped = "zipkin_collector.spans_dropped" + footer;
-  }
-  /*ActuateCollectorMetrics(CounterService counterService, GaugeService gaugeService) {
+  ActuateCollectorMetrics(CounterService counterService, GaugeService gaugeService) {
     this(counterService, gaugeService, null);
   }
-
-
 
   ActuateCollectorMetrics(CounterService counterService, GaugeService gaugeService,
                           @Nullable String transport) {
@@ -80,37 +69,47 @@ final class ActuateCollectorMetrics implements CollectorMetrics {
     this.bytes = "zipkin_collector.bytes" + footer;
     this.spans = "zipkin_collector.spans" + footer;
     this.spansDropped = "zipkin_collector.spans_dropped" + footer;
-  }*/
+  }
 
   @Override public ActuateCollectorMetrics forTransport(String transportType) {
     checkNotNull(transportType, "transportType");
-    return new ActuateCollectorMetrics(transportType);
+    return new ActuateCollectorMetrics(counterService, gaugeService, transportType);
   }
 
   @Override public void incrementMessages() {
-
+    counterService.increment(messages);
   }
 
   @Override public void incrementMessagesDropped() {
-
-
+    counterService.increment(messagesDropped);
   }
 
   @Override public void incrementSpans(int quantity) {
-
+    gaugeService.submit(messageSpans, quantity);
+    for (int i = 0; i < quantity; i++)
+      counterService.increment(spans);
   }
 
   @Override public void incrementBytes(int quantity) {
-
+    gaugeService.submit(messageBytes, quantity);
+    for (int i = 0; i < quantity; i++)
+      counterService.increment(bytes);
   }
 
   @Override
   public void incrementSpansDropped(int quantity) {
-
+    for (int i = 0; i < quantity; i++)
+      counterService.increment(spansDropped);
   }
 
   // visible for testing
   void reset() {
-
+    counterService.reset(messages);
+    counterService.reset(messagesDropped);
+    counterService.reset(bytes);
+    counterService.reset(spans);
+    counterService.reset(spansDropped);
+    gaugeService.submit(messageSpans, 0);
+    gaugeService.submit(messageBytes, 0);
   }
 }

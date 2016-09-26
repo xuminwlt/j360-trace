@@ -1,29 +1,18 @@
 package me.j360.trace.collector.kafka;
 
-import com.github.charithe.kafka.KafkaJunitRule;
-import kafka.serializer.DefaultDecoder;
 import me.j360.trace.collector.core.SpanCollectorMetricsHandler;
 import me.j360.trace.collector.core.module.Span;
-import me.j360.trace.core.Codec;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
-import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class RemoteInstanceKafkaSpanCollectorTest {
 
   TestMetricsHander metrics = new TestMetricsHander();
   // set flush interval to 0 so that tests can drive flushing explicitly
-  KafkaSpanCollector.Config config = KafkaSpanCollector.Config.builder("172.16.10.201:9092").flushInterval(0).build();
+  KafkaSpanCollector.Config config = KafkaSpanCollector.Config.builder("172.16.10.125:9092").flushInterval(0).build();
 
   KafkaSpanCollector collector = new KafkaSpanCollector(config, metrics);
 
@@ -41,6 +30,39 @@ public class RemoteInstanceKafkaSpanCollectorTest {
     collector.flush(); // manually flush the spans
   }
 
+  @Test
+  public void submitMultipleSpansInParallel() throws Exception {
+    Callable<Void> spanProducer1 = new Callable<Void>() {
+
+      @Override
+      public Void call() throws Exception {
+        for (int i = 1; i <= 200; i++) {
+          collector.collect(span(i, "producer1_" + i));
+        }
+        return null;
+      }
+    };
+
+    Callable<Void> spanProducer2 = new Callable<Void>() {
+
+      @Override
+      public Void call() throws Exception {
+        for (int i = 1; i <= 200; i++) {
+          collector.collect(span(i, "producer2_" + i));
+        }
+        return null;
+      }
+    };
+
+    ExecutorService executorService = Executors.newFixedThreadPool(2);
+    Future<Void> future1 = executorService.submit(spanProducer1);
+    Future<Void> future2 = executorService.submit(spanProducer2);
+
+    future1.get(2000, TimeUnit.MILLISECONDS);
+    future2.get(2000, TimeUnit.MILLISECONDS);
+
+    collector.flush(); // manually flush the spans
+  }
 
   class TestMetricsHander implements SpanCollectorMetricsHandler {
 

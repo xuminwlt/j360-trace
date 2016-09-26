@@ -11,20 +11,16 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package me.j360.trace.example.consumer1;
+package me.j360.trace.example.consumer2;
 
-import me.j360.trace.core.internal.LazyCloseable;
-import me.j360.trace.storage.elasticsearch.ElasticsearchStorage;
+import org.springframework.context.annotation.Import;
 
-enum ElasticsearchGraph {
-  INSTANCE;
+import java.lang.annotation.*;
 
-  final LazyCloseable<ElasticsearchStorage> storage = new LazyCloseable<ElasticsearchStorage>() {
-    @Override
-    protected ElasticsearchStorage compute() {
-      ElasticsearchStorage result = ElasticsearchStorage.builder().build();
-      return result;
-    }
-  };
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import({ZipkinServerConfiguration.class})
+public @interface EnableBootstrapServer {
 
 }

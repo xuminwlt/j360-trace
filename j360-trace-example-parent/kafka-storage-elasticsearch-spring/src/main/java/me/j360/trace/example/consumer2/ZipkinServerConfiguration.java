@@ -11,10 +11,11 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package me.j360.trace.example.consumer1;
+package me.j360.trace.example.consumer2;
 
 import me.j360.trace.core.Codec;
 import me.j360.trace.core.collector.Collector;
+import me.j360.trace.core.collector.CollectorComponent;
 import me.j360.trace.core.collector.CollectorMetrics;
 import me.j360.trace.core.collector.CollectorSampler;
 import me.j360.trace.core.internal.Nullable;
@@ -55,7 +56,10 @@ public class ZipkinServerConfiguration {
   }
 
   final CollectorMetrics metrics =  new ActuateCollectorMetrics(null);
-  final Collector collector = Collector.builder(KafkaCollector.class).storage(ElasticsearchStorage.builder().build()).build();
+
+  final Collector collector = Collector.builder(KafkaCollector.class).metrics(metrics).storage(ElasticsearchStorage.builder().build()).build();
+  final CollectorComponent component = KafkaCollector.builder().metrics(metrics).storage(ElasticsearchStorage.builder().build()).streams(1).build().start();
+
 
   static final ResponseEntity<?> SUCCESS = ResponseEntity.accepted().build();
 

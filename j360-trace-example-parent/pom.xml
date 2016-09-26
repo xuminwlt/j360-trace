@@ -15,7 +15,7 @@
         <module>j360-trace-example-springmvc</module>
         <module>j360-trace-example-dubbo</module>
         <module>kafka-storage-elasticsearch</module>
+        <module>kafka-storage-elasticsearch-spring</module>
     </modules>
-
 
 </project>
