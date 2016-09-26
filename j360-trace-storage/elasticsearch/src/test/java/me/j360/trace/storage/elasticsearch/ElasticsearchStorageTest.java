@@ -13,9 +13,9 @@
  */
 package me.j360.trace.storage.elasticsearch;
 
-import me.j360.trace.core.Component;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.junit.Test;
+import me.j360.trace.core.Component.CheckResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +23,7 @@ public class ElasticsearchStorageTest {
 
   @Test
   public void check_failsInsteadOfThrowing() {
-    Component.CheckResult result =
+    CheckResult result =
         ElasticsearchStorage.builder().cluster("1.1.1.1").build().check();
 
     assertThat(result.ok).isFalse();

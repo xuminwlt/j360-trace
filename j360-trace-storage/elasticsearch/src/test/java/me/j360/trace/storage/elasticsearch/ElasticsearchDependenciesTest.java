@@ -13,20 +13,19 @@
  */
 package me.j360.trace.storage.elasticsearch;
 
-
 import me.j360.trace.core.DependencyLink;
 import me.j360.trace.core.Span;
 import me.j360.trace.core.internal.MergeById;
+import me.j360.trace.core.storage.DependenciesTest;
 import me.j360.trace.core.storage.InMemorySpanStore;
 import me.j360.trace.core.storage.InMemoryStorage;
 import me.j360.trace.core.storage.StorageComponent;
-import me.j360.trace.storage.core.TestObjects;
-import me.j360.trace.storage.elasticsearch.storage.DependenciesTest;
 
 import java.util.List;
 
+import static me.j360.trace.core.TestObjects.DAY;
+import static me.j360.trace.core.TestObjects.TODAY;
 import static me.j360.trace.core.internal.Util.midnightUTC;
-
 
 public class ElasticsearchDependenciesTest extends DependenciesTest {
 
@@ -55,7 +54,7 @@ public class ElasticsearchDependenciesTest extends DependenciesTest {
   public void processDependencies(List<Span> spans) {
     InMemoryStorage mem = new InMemoryStorage();
     mem.spanConsumer().accept(spans);
-    List<DependencyLink> links = mem.spanStore().getDependencies(TestObjects.TODAY + TestObjects.DAY, null);
+    List<DependencyLink> links = mem.spanStore().getDependencies(TODAY + DAY, null);
 
     // This gets or derives a timestamp from the spans
     long midnight = midnightUTC(MergeById.apply(spans).get(0).timestamp / 1000);

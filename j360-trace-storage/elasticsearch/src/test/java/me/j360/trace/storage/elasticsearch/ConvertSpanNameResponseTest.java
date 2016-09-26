@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import me.j360.trace.storage.elasticsearch.ElasticsearchSpanStore.ConvertSpanNameResponse;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +41,7 @@ public class ConvertSpanNameResponseTest {
 
   @Test
   public void emptyWhenAggregatesAreNull() {
-    assertThat(ElasticsearchSpanStore.ConvertSpanNameResponse.INSTANCE.apply(response))
+    assertThat(ConvertSpanNameResponse.INSTANCE.apply(response))
         .isEmpty();
   }
 
@@ -48,7 +49,7 @@ public class ConvertSpanNameResponseTest {
   public void emptyWhenMissingNameAgg() {
     when(response.getAggregations()).thenReturn(aggregations);
 
-    assertThat(ElasticsearchSpanStore.ConvertSpanNameResponse.INSTANCE.apply(response))
+    assertThat(ConvertSpanNameResponse.INSTANCE.apply(response))
         .isEmpty();
   }
 
@@ -61,7 +62,7 @@ public class ConvertSpanNameResponseTest {
     when(terms.getBuckets()).thenReturn(asList(bucket));
     when(bucket.getKeyAsString()).thenReturn("service");
 
-    assertThat(ElasticsearchSpanStore.ConvertSpanNameResponse.INSTANCE.apply(response))
+    assertThat(ConvertSpanNameResponse.INSTANCE.apply(response))
         .containsExactly("service");
   }
 }

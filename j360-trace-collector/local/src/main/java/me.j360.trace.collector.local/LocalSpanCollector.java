@@ -1,6 +1,7 @@
 package me.j360.trace.collector.local;
 
 import com.google.auto.value.AutoValue;
+import me.j360.trace.collector.core.EmptySpanCollectorMetricsHandler;
 import me.j360.trace.collector.core.FlushingSpanCollector;
 import me.j360.trace.collector.core.SpanCollectorMetricsHandler;
 import me.j360.trace.collector.core.module.Span;
@@ -17,24 +18,11 @@ import java.util.List;
  */
 public final class LocalSpanCollector extends FlushingSpanCollector {
 
-  /**
-   * @param metrics
-   * @param flushInterval in seconds. 0 implies spans are {@link #flush() flushed externally.
-   */
-  protected LocalSpanCollector(SpanCollectorMetricsHandler metrics, int flushInterval) {
-    super(metrics, flushInterval);
-  }
-
-  @Override
-  protected void reportSpans(List<Span> drained) throws IOException {
-
-  }
-
   @AutoValue
   public static abstract class Config {
     public static Builder builder() {
       return new AutoValue_LocalSpanCollector_Config.Builder()
-          .flushInterval(1);
+              .flushInterval(1);
     }
 
     abstract int flushInterval();
@@ -59,7 +47,7 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
    *                these events you can use {@linkplain EmptySpanCollectorMetricsHandler}
    */
   public static LocalSpanCollector create(StorageComponent storageComponent,
-      SpanCollectorMetricsHandler metrics) {
+                                          SpanCollectorMetricsHandler metrics) {
     return new LocalSpanCollector(storageComponent, Config.builder().build(), metrics);
   }
 
@@ -70,13 +58,13 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
    *                these events you can use {@linkplain EmptySpanCollectorMetricsHandler}
    */
   public static LocalSpanCollector create(StorageComponent storageComponent, Config config,
-      SpanCollectorMetricsHandler metrics) {
+                                          SpanCollectorMetricsHandler metrics) {
     return new LocalSpanCollector(storageComponent, config, metrics);
   }
 
   // Visible for testing. Ex when tests need to explicitly control flushing, set interval to 0.
   LocalSpanCollector(StorageComponent storageComponent, Config config,
-      SpanCollectorMetricsHandler metrics) {
+                     SpanCollectorMetricsHandler metrics) {
     super(metrics, config.flushInterval());
     this.storageComponent = storageComponent;
     this.metrics = metrics;
@@ -88,10 +76,10 @@ public final class LocalSpanCollector extends FlushingSpanCollector {
     for (Span input : drained) {
       zipkinSpans.add(input.toZipkin());
     }
-    // This dereferences a lazy, which might throw an exception if the me.j360.trace.core.storage system is down.
+    // This dereferences a lazy, which might throw an exception if the storage system is down.
     AsyncSpanConsumer asyncSpanConsumer = storageComponent.asyncSpanConsumer();
 
-    // We accept the spans into me.j360.trace.core.storage, incrementing drop metrics if there was a failure.
+    // We accept the spans into storage, incrementing drop metrics if there was a failure.
     asyncSpanConsumer.accept(zipkinSpans, new Callback<Void>() {
       @Override public void onSuccess(Void ignored) {
       }
