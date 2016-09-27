@@ -16,7 +16,7 @@
     <!-- 提供方应用信息，用于计算依赖关系 -->
     <dubbo:application name="user_provider" logger="slf4j"/>
     <!-- 使用zookeeper注册中心暴露服务地址 -->
-    <dubbo:registry address="zookeeper://172.16.10.222:2181" />
+    <dubbo:registry address="zookeeper://172.16.10.125:2181" />
 
 
     <dubbo:provider filter="j360Provider"/>
