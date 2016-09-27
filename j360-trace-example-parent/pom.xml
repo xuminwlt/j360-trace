@@ -21,6 +21,7 @@
         <module>autoconfiguration-collector-kafka</module>
         <module>autoconfiguration-storage-elasticsearch</module>
         <module>webserver</module>
+        <module>springmvc-dubbo</module>
     </modules>
 
 </project>
