@@ -50,6 +50,7 @@ public class ZipkinServerConfiguration {
     return new ActuateCollectorMetrics(counterService, gaugeService);
   }
 
+
   @Configuration
   @ConditionalOnSelfTracing
   static class BraveTracedStorageComponentEnhancer implements BeanPostProcessor {

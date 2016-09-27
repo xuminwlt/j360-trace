@@ -12,7 +12,7 @@ public class RemoteInstanceKafkaSpanCollectorTest {
 
   TestMetricsHander metrics = new TestMetricsHander();
   // set flush interval to 0 so that tests can drive flushing explicitly
-  KafkaSpanCollector.Config config = KafkaSpanCollector.Config.builder("172.16.10.125:9092").flushInterval(0).build();
+  KafkaSpanCollector.Config config = KafkaSpanCollector.Config.builder("192.168.31.164:9092").flushInterval(0).build();
 
   KafkaSpanCollector collector = new KafkaSpanCollector(config, metrics);
 

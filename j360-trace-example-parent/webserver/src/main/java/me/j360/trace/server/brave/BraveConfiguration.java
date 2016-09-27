@@ -14,10 +14,8 @@
 package me.j360.trace.server.brave;
 
 import me.j360.trace.collector.core.*;
-import me.j360.trace.collector.local.LocalSpanCollector;
+import me.j360.trace.collector.kafka.KafkaSpanCollector;
 import me.j360.trace.core.Endpoint;
-import me.j360.trace.core.collector.CollectorMetrics;
-import me.j360.trace.core.storage.StorageComponent;
 import me.j360.trace.server.ConditionalOnSelfTracing;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,7 +54,7 @@ public class BraveConfiguration {
     return Endpoint.create("zipkin-server", ipv4, port);
   }
 
-  @Bean LocalSpanCollector spanCollector(StorageComponent storage,
+  /*@Bean LocalSpanCollector spanCollector(StorageComponent storage,
       @Value("${zipkin.self-tracing.flush-interval:1}") int flushInterval,
       final CollectorMetrics metrics) {
     LocalSpanCollector.Config config = LocalSpanCollector.Config.builder()
@@ -72,7 +70,23 @@ public class BraveConfiguration {
         local.incrementSpansDropped(i);
       }
     });
-  }
+  }*/
+
+  /*@Bean KafkaSpanCollector spanCollector(
+          final CollectorMetrics metrics) {
+    KafkaSpanCollector.Config config = KafkaSpanCollector.Config.builder("172.16.10.125:9092").flushInterval(0).build();
+    return KafkaSpanCollector.create(config, new SpanCollectorMetricsHandler() {
+      CollectorMetrics local = metrics.forTransport("local");
+
+      @Override public void incrementAcceptedSpans(int i) {
+        local.incrementSpans(i);
+      }
+
+      @Override public void incrementDroppedSpans(int i) {
+        local.incrementSpansDropped(i);
+      }
+    });
+  }*/
 
   @Bean
   ServerClientAndLocalSpanState braveState(@Qualifier("local") Endpoint localEndpoint) {
@@ -81,11 +95,11 @@ public class BraveConfiguration {
   }
 
   @Bean
-  Brave brave(ServerClientAndLocalSpanState braveState, LocalSpanCollector spanCollector,
+  Brave brave(ServerClientAndLocalSpanState braveState,
               @Value("${zipkin.self-tracing.sample-rate:1.0}") float rate) {
     return new Brave.Builder(braveState)
         .traceSampler(rate < 0.01 ? BoundarySampler.create(rate) : Sampler.create(rate))
-        .spanCollector(spanCollector)
+            .spanCollector(KafkaSpanCollector.create("172.16.10.125:9092", new EmptySpanCollectorMetricsHandler()))
         .build();
   }
 }

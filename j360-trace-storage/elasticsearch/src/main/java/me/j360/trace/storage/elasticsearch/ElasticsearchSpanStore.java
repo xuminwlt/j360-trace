@@ -91,7 +91,9 @@ final class ElasticsearchSpanStore implements GuavaSpanStore {
           .should(termQuery("annotations.endpoint.serviceName", request.serviceName))
           .should(nestedQuery(
               "binaryAnnotations",
-              termQuery("binaryAnnotations.endpoint.serviceName", request.serviceName))));
+              termQuery("binaryAnnotations.endpoint.serviceName", request.serviceName)))
+
+      );
     }
     if (request.spanName != null) {
       filter.must(termQuery("name", request.spanName));

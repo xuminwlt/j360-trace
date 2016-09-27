@@ -67,4 +67,11 @@ public class LazyClientTest {
       throw new AssumptionViolatedException(e.getMessage());
     }
   }
+
+
+  @Test
+  public void laayCientCompute(){
+    LazyClient lazyClient = new LazyClient(new ElasticsearchStorage.Builder());
+    lazyClient.compute();
+  }
 }
