@@ -71,10 +71,28 @@
     - java service（javasist aspectj）暂未集成
 
 * example
-    - springmvc
+    - springmvc+filter
     - dubbo
-    - springmvc-collector-kafkaProductor ???
-    - springmvc-dubbo-collector-kafkaProductor ???
+    - springmvc-collector-kafkaProductor
+    - springmvc-dubbo-collector-kafkaProductor
     - kafkaConsumerStream-storage-elasticsearch-native-start
     - kafkaConsumerStream-storage-elasticsearch-springboot-start
 
+
+* 生产环境JEE中使用监控
+ - 生产环境使用微服务设计方式,具体的Java容器部署包括:
+    - tomcat/jetty 若干 http入口
+    - jar 若干 基础+业务服务
+    - dubbo相关服务
+ - 单个http请求链路服务时序
+    - filter 权限过滤等(shiro)
+    - springmvc interceptor 部分拦截(log等)
+    - 外部服务请求 http (httpClient/okhttp/restTemplate)
+    - 一级微服务调用
+    - 二级微服务调用
+    - interceptor 返回
+    - filter response确认
+ - 请求链路分为
+    - client请求方 负责发起,接收
+    - server服务方 负责接收,返回
+    - 相邻链路同为server时,只记录一次,比如shiro的filter直接过滤掉信息,则不转发到servlet中处理,如果成功,则以servlet为准,部分接口不经过shiro则直接servlet接收
