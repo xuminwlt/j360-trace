@@ -1,7 +1,10 @@
 package me.j360.trace.example.springmvc;
 
-import me.j360.trace.collector.core.*;
-import me.j360.trace.collector.kafka.KafkaSpanCollector;
+import me.j360.trace.collector.core.Brave;
+import me.j360.trace.collector.core.ServerRequestInterceptor;
+import me.j360.trace.collector.core.ServerResponseInterceptor;
+import me.j360.trace.collector.core.ServerSpanThreadBinder;
+import me.j360.trace.filter.J360ServletFilter;
 import me.j360.trace.http.DefaultSpanNameProvider;
 import me.j360.trace.spring.core.BraveApiConfig;
 import me.j360.trace.springmvc.ServletHandlerInterceptor;
@@ -30,7 +33,7 @@ public class BraveConfig extends WebMvcConfigurerAdapter {
     @Bean
     public Brave brave() {
         Brave.Builder builder = new Brave.Builder("J360ServletInterceptorIntegration")
-                .spanCollector(KafkaSpanCollector.create("172.16.10.125:9092", new EmptySpanCollectorMetricsHandler()));
+                .spanCollector(SpanCollectorForTesting.getInstance());
         return builder.build();
     }
 
@@ -44,4 +47,12 @@ public class BraveConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new ServletHandlerInterceptor(requestInterceptor, responseInterceptor, new DefaultSpanNameProvider(), serverThreadBinder));
     }
 
+    @Autowired
+    private Brave brave;
+
+    @Bean
+    public J360ServletFilter j360ServletFilter(){
+        return  new J360ServletFilter(brave.serverRequestInterceptor(), brave.serverResponseInterceptor(), new DefaultSpanNameProvider());
+
+    }
 }

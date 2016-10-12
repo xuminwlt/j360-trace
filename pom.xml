@@ -23,6 +23,7 @@
         <module>j360-trace-storage-core</module>
         <module>j360-trace-okhttp</module>
         <module>j360-trace-example-parent/webserver</module>
+        <module>j360-trace-filter</module>
     </modules>
 
 
