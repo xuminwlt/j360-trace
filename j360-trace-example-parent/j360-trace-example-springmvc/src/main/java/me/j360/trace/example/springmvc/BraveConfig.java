@@ -1,13 +1,12 @@
 package me.j360.trace.example.springmvc;
 
-import me.j360.trace.collector.core.Brave;
-import me.j360.trace.collector.core.ServerRequestInterceptor;
-import me.j360.trace.collector.core.ServerResponseInterceptor;
-import me.j360.trace.collector.core.ServerSpanThreadBinder;
+import me.j360.trace.collector.core.*;
 import me.j360.trace.filter.J360ServletFilter;
 import me.j360.trace.http.DefaultSpanNameProvider;
+import me.j360.trace.okhttp.BraveOkHttpRequestResponseInterceptor;
 import me.j360.trace.spring.core.BraveApiConfig;
 import me.j360.trace.springmvc.ServletHandlerInterceptor;
+import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,10 +48,19 @@ public class BraveConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
     private Brave brave;
+    @Autowired
+    private ClientTracer clientTracer;
 
     @Bean
     public J360ServletFilter j360ServletFilter(){
         return  new J360ServletFilter(brave.serverRequestInterceptor(), brave.serverResponseInterceptor(), new DefaultSpanNameProvider());
 
+    }
+
+    @Bean
+    public OkHttpClient okHttpClient(){
+        return new OkHttpClient.Builder()
+                .addInterceptor(new BraveOkHttpRequestResponseInterceptor(new ClientRequestInterceptor(clientTracer), new ClientResponseInterceptor(clientTracer), new DefaultSpanNameProvider()))
+                .build();
     }
 }

@@ -65,8 +65,8 @@
             - UserController -> UserService - > ↓
             - result =  _1  < - getUserName(uid)
     - httpClient
-    - okhttp
-    - mysql
+    - okhttp - spring环境中配置OkHttpClient bean
+    - mysql - 在连接jdbc后添加?statementInterceptors=me.j360.trace.mysql.MySQLStatementInterceptor
     - mq
     - java service（javasist aspectj）暂未集成
 
