@@ -27,6 +27,11 @@ public class PingController {
                 .build();
         client.newCall(request).execute();
 
+        Request request2 = new Request.Builder()
+                .url("http://www.qq.com")
+                .build();
+        client.newCall(request2).execute();
+
         return ResponseEntity.noContent().build();
     }
 
