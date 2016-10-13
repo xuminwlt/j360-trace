@@ -1,11 +1,11 @@
 ## j360-trace-all
-跟踪监控插件，开箱即用，使用方式参考module:j360-trace-example
+跟踪监控插件，开箱即用，代码整理源于zipkin,并整合实际场景中的应用 duboo,shiro等拦截监控,加入各种sample整合,使用方式参考module:j360-trace-example
 * 本项目供学习之用，参考Google Dapper论文设计，收集存储分离，使用kafka，http，mq等进行解耦
 
 * java监控和信息收集主要有以下几种实行
-    - Agent形式，通常是用字节码修改技术+java.lang.instrument等方式，可以做到无侵入监控
-    - 过滤器、拦截器、aop aspectJ等配置化方式收集，配置化植入，可以无需修改代码(本方案采用)
-    - 代码埋点植入，需要添加植入代码收集
+    - Agent形式，通常是用字节码修改技术+java.lang.instrument等方式，可以做到无侵入监控,参考pinpoint,BTrace
+    - 过滤器、拦截器、aop aspectJ等配置化方式收集，配置化植入，可以无需修改代码(本方案采用) 参考zipkin+brave
+    - 代码埋点植入，需要添加植入代码收集,参考cat、cat2
 
 * 依赖
  - Maven3+
