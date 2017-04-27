@@ -1,7 +1,7 @@
 package me.j360.trace.dubbo;
 
 
-/** Well-known {@link BinaryAnnotation#key binary annotation keys} for gRPC */
+/** Well-known {@link BinaryAnnotation#key binary annotation keys} for dubbo */
 public final class DubboKeys {
 
     /**

@@ -7,8 +7,8 @@ import me.j360.trace.collector.core.*;
 import me.j360.trace.collector.core.internal.Nullable;
 import me.j360.trace.collector.core.module.Endpoint;
 import me.j360.trace.http.BraveHttpHeaders;
+import org.slf4j.MDC;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -69,6 +69,9 @@ public class J360DubboClientFilter implements Filter {
                     ((RpcInvocation) invocation).setAttachment(BraveHttpHeaders.ParentSpanId.getName(), IdConversion.convertToString(spanId.parentId));
 
                 }
+
+                MDC.put("traceId",IdConversion.convertToString(spanId.traceId));
+                MDC.put("spanId",IdConversion.convertToString(spanId.spanId));
             }
         }
 

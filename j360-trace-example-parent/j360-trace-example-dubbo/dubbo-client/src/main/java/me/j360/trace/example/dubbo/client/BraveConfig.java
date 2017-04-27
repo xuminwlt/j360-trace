@@ -1,8 +1,6 @@
 package me.j360.trace.example.dubbo.client;
 
 import me.j360.trace.collector.core.Brave;
-import me.j360.trace.collector.core.EmptySpanCollectorMetricsHandler;
-import me.j360.trace.collector.kafka.KafkaSpanCollector;
 import me.j360.trace.spring.core.BraveApiConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +24,10 @@ public class BraveConfig {
     }*/
     @Bean
     public Brave brave() {
+        /*Brave.Builder builder = new Brave.Builder("J360DubboInterceptorIntegration")
+                .spanCollector(KafkaSpanCollector.create("172.16.10.125:9092", new EmptySpanCollectorMetricsHandler()));*/
         Brave.Builder builder = new Brave.Builder("J360DubboInterceptorIntegration")
-                .spanCollector(KafkaSpanCollector.create("172.16.10.125:9092", new EmptySpanCollectorMetricsHandler()));
+                .spanCollector(SpanCollectorForTesting.getInstance());
         return builder.build();
     }
 }
